@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -13,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Select from '@mui/material/Select';
 import Grid from '@mui/material/Unstable_Grid2';
+import * as React from 'react';
 
 const states = [
   { value: 'alabama', label: 'Alabama' },
@@ -36,19 +36,19 @@ export function AccountDetailsForm(): React.JSX.Element {
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>First name</InputLabel>
-                <OutlinedInput defaultValue="Sofia" label="First name" name="firstName" />
+                <OutlinedInput defaultValue="Fulano" label="First name" name="firstName" />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Last name</InputLabel>
-                <OutlinedInput defaultValue="Rivers" label="Last name" name="lastName" />
+                <OutlinedInput defaultValue="Silva" label="Last name" name="lastName" />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Email address</InputLabel>
-                <OutlinedInput defaultValue="sofia@devias.io" label="Email address" name="email" />
+                <OutlinedInput defaultValue="fulano@ufma.br" label="Email address" name="email" />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>

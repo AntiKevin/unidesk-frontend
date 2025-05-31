@@ -1,8 +1,5 @@
 'use client';
 
-import * as React from 'react';
-import RouterLink from 'next/link';
-import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
@@ -15,12 +12,15 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
+import RouterLink from 'next/link';
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
 
-import { paths } from '@/paths';
-import { authClient } from '@/lib/auth/client';
 import { useUser } from '@/hooks/use-user';
+import { authClient } from '@/lib/auth/client';
+import { paths } from '@/paths';
 
 const schema = zod.object({
   email: zod.string().min(1, { message: 'Email is required' }).email(),
@@ -29,7 +29,7 @@ const schema = zod.object({
 
 type Values = zod.infer<typeof schema>;
 
-const defaultValues = { email: 'sofia@devias.io', password: 'Secret1' } satisfies Values;
+const defaultValues = { email: 'fulano@ufma.br', password: 'Secret1' } satisfies Values;
 
 export function SignInForm(): React.JSX.Element {
   const router = useRouter();
@@ -141,7 +141,7 @@ export function SignInForm(): React.JSX.Element {
       <Alert color="warning">
         Use{' '}
         <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
-          sofia@devias.io
+          fulano@ufma.br
         </Typography>{' '}
         with password{' '}
         <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">

@@ -1,10 +1,11 @@
 'use client';
 
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import { useColorScheme } from '@mui/material/styles';
+import * as React from 'react';
 
 import { NoSsr } from '@/components/core/no-ssr';
+import { Typography } from '@mui/material';
 
 const HEIGHT = 60;
 const WIDTH = 60;
@@ -21,13 +22,12 @@ export interface LogoProps {
 export function Logo({ color = 'dark', emblem, height = HEIGHT, width = WIDTH }: LogoProps): React.JSX.Element {
   let url: string;
 
-  if (emblem) {
-    url = color === 'light' ? '/assets/logo-emblem.svg' : '/assets/logo-emblem--dark.svg';
-  } else {
-    url = color === 'light' ? '/assets/logo.svg' : '/assets/logo--dark.svg';
-  }
-
-  return <Box alt="logo" component="img" height={height} src={url} width={width} />;
+  return (
+    <Typography height={height} width={width} component="span" sx={{ color: '#15b79e' }}>
+      UniDesk
+    </Typography>
+  )
+      
 }
 
 export interface DynamicLogoProps {

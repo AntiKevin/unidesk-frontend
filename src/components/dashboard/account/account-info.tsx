@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -7,14 +6,15 @@ import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import * as React from 'react';
 
 const user = {
-  name: 'Sofia Rivers',
+  name: 'Fulano Silva',
   avatar: '/assets/avatar.png',
-  jobTitle: 'Senior Developer',
-  country: 'USA',
-  city: 'Los Angeles',
-  timezone: 'GTM-7',
+  jobTitle: 'Coordenador',
+  country: 'BraSil',
+  city: 'São Luís',
+  timezone: 'GTM-3',
 } as const;
 
 export function AccountInfo(): React.JSX.Element {
