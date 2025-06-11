@@ -23,7 +23,7 @@ export function Logo({ color = 'dark', emblem, height = HEIGHT, width = WIDTH }:
   let url: string;
 
   return (
-    <Typography height={height} width={width} component="span" sx={{ color: '#15b79e' }}>
+    <Typography height={height} width={width} component="span" sx={{ color: '#15b79e', fontSize: '1.5rem', fontWeight: 700 }}>
       UniDesk
     </Typography>
   )
