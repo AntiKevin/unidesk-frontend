@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import RouterLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
@@ -13,6 +14,7 @@ import { isNavItemActive } from '@/lib/is-nav-item-active';
 import { paths } from '@/paths';
 import type { NavItemConfig } from '@/types/nav';
 
+import { Button } from '@mui/material';
 import { navItems } from './config';
 import { navIcons } from './nav-icons';
 
@@ -72,11 +74,41 @@ export function SideNav(): React.JSX.Element {
           </Box>
           <CaretUpDownIcon />
         </Box> */}
+    
       </Stack>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
         {renderNavItems({ pathname, items: navItems })}
       </Box>
+      <Box
+          sx={{
+            alignItems: 'center',
+            backgroundColor: 'var(--mui-palette-neutral-950)',
+            cursor: 'pointer',
+            display: 'flex',
+            maxWidth: '100%',
+            mt: 4,
+            mb: 2,
+            mx: 3,
+          }}
+        >
+         <Button
+            sx={
+              {
+                alignItems: 'center',
+                backgroundColor: 'var(--mui-palette-primary-main)',
+                color: 'var(--mui-palette-primary-contrastText)',
+                display: 'flex',
+                gap: 1,
+                px: 6,
+              }
+            }
+            startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} 
+            variant="contained"
+          >
+            Novo Chamado
+          </Button>
+        </Box>
     </Box>
   );
 }
