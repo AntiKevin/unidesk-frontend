@@ -20,7 +20,7 @@ export interface SalesProps {
   sx?: SxProps;
 }
 
-export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
+export function Statistics({ chartSeries, sx }: SalesProps): React.JSX.Element {
   const chartOptions = useChartOptions();
 
   return (
@@ -31,7 +31,7 @@ export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
             Sync
           </Button>
         }
-        title="Sales"
+        title="Estatísticas"
       />
       <CardContent>
         <Chart height={350} options={chartOptions} series={chartSeries} type="bar" width="100%" />
@@ -39,7 +39,7 @@ export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
       <Divider />
       <CardActions sx={{ justifyContent: 'flex-end' }}>
         <Button color="inherit" endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />} size="small">
-          Overview
+          Ver todos
         </Button>
       </CardActions>
     </Card>
@@ -72,7 +72,7 @@ function useChartOptions(): ApexOptions {
     },
     yaxis: {
       labels: {
-        formatter: (value) => (value > 0 ? `${value}K` : `${value}`),
+        formatter: (value) => (value > 0 ? `${value}` : `${value}`),
         offsetX: -10,
         style: { colors: theme.palette.text.secondary },
       },

@@ -16,48 +16,53 @@ import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/Arr
 import dayjs from 'dayjs';
 
 const statusMap = {
-  pending: { label: 'Pending', color: 'warning' },
-  delivered: { label: 'Delivered', color: 'success' },
-  refunded: { label: 'Refunded', color: 'error' },
+  aberto: { label: 'Aberto', color: 'primary' },
+  resolvido: { label: 'Resolvido', color: 'success' },
+  emAndamento: { label: 'Em Andamento', color: 'warning' },
 } as const;
 
-export interface Order {
+export interface Ticket {
   id: string;
-  customer: { name: string };
-  amount: number;
-  status: 'pending' | 'delivered' | 'refunded';
-  createdAt: Date;
+  titulo: string;
+  solicitante: {nome: string, email: string};
+  departamento: string;
+  prioridade: string
+  status: 'aberto' | 'emAndamento' | 'resolvido';
+  criadoEm: Date;
 }
 
 export interface LatestOrdersProps {
-  orders?: Order[];
+  tickets?: Ticket[];
   sx?: SxProps;
 }
 
-export function LatestOrders({ orders = [], sx }: LatestOrdersProps): React.JSX.Element {
+export function LatestTickets({ tickets = [], sx }: LatestOrdersProps): React.JSX.Element {
+
+  
+
   return (
     <Card sx={sx}>
-      <CardHeader title="Latest orders" />
+      <CardHeader title="Ultimos Chamados" />
       <Divider />
       <Box sx={{ overflowX: 'auto' }}>
         <Table sx={{ minWidth: 800 }}>
           <TableHead>
             <TableRow>
-              <TableCell>Order</TableCell>
-              <TableCell>Customer</TableCell>
+              <TableCell>Número</TableCell>
+              <TableCell>Titulo</TableCell>
               <TableCell sortDirection="desc">Date</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((order) => {
-              const { label, color } = statusMap[order.status] ?? { label: 'Unknown', color: 'default' };
+            {tickets.map((ticket) => {
+              const { label, color } = statusMap[ticket.status] ?? { label: 'Unknown', color: 'default' };
 
               return (
-                <TableRow hover key={order.id}>
-                  <TableCell>{order.id}</TableCell>
-                  <TableCell>{order.customer.name}</TableCell>
-                  <TableCell>{dayjs(order.createdAt).format('MMM D, YYYY')}</TableCell>
+                <TableRow hover key={ticket.id}>
+                  <TableCell>{ticket.id}</TableCell>
+                  <TableCell>{ticket.titulo}</TableCell>
+                  <TableCell>{dayjs(ticket.criadoEm).format('D, MMM YYYY')}</TableCell>
                   <TableCell>
                     <Chip color={color} label={label} size="small" />
                   </TableCell>
