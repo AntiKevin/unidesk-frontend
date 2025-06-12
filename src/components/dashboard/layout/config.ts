@@ -10,6 +10,6 @@ export const navItems = [
   // { key: 'error', title: 'Error', href: paths.errors.notFound, icon: 'x-square' },
   //{ key: 'integrations', title: 'Integrations', href: paths.dashboard.integrations, icon: 'plugs-connected' },
   //{ key: 'settings', title: 'Settings', href: paths.dashboard.settings, icon: 'gear-six' },
-  { key: 'chamados', title: 'Chamados', href: paths.dashboard.chamados, icon: 'plugs-connected' },
+  { key: 'chamados2', title: 'Chamados', href: paths.dashboard.chamados, icon: 'plugs-connected' },
   //{ key: 'error', title: 'Error', href: paths.errors.notFound, icon: 'x-square' },
 ] satisfies NavItemConfig[];

@@ -17,7 +17,7 @@ import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/Arr
 import dayjs from 'dayjs';
 import { Stack } from '@mui/system';
 import { IconButton, Tooltip } from '@mui/material';
-import { MagnifyingGlass, NotePencil } from '@phosphor-icons/react/dist/ssr';
+import { Check, MagnifyingGlass } from '@phosphor-icons/react/dist/ssr';
 import DialogCustom from './dialog-custom';
 
 const statusMap = {
@@ -87,15 +87,25 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
 
   const [selectedElement, setSelectedElement] = React.useState<Chamado | null>(null);
   const [isDialogOpen, setDialogOpen] = React.useState(false);
+  const [mode, setMode] = React.useState<'view' | 'finalize'>('view');
 
-  const openDialog = (chamado: Chamado) => {
-    setSelectedElement(chamado);
+  const openDialog = (ticket: Chamado, mode: 'view' | 'finalize') => {
+    setSelectedElement(ticket);
+    setMode(mode);
     setDialogOpen(true);
   };
 
   const closeDialog = () => {
     setSelectedElement(null);
     setDialogOpen(false);
+  };
+
+  const handleDialogSubmit = (status: string) => {
+    console.log('Mudança do ticket: ', status);
+
+    // Aqui você pode:
+    // - Atualizar o estado local
+    // - Enviar uma requisição para API (ex: via fetch ou axios)
   };
 
   return (
@@ -131,14 +141,14 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
                   </TableCell>
                   <TableCell>
                     <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Tooltip title="Search">
-                          <IconButton onClick={() => openDialog(chamado)}>
+                      <Tooltip title="Visualizar">
+                          <IconButton onClick={() => openDialog(chamado, 'view')}>
                             <MagnifyingGlass />
                           </IconButton>
                       </Tooltip>
-                      <Tooltip title="Edit">
-                          <IconButton>
-                            <NotePencil/>
+                      <Tooltip title="Fechar">
+                          <IconButton onClick= {() => openDialog(chamado, 'finalize')}>
+                            <Check />
                           </IconButton>
                       </Tooltip>
                     </Stack>
@@ -165,6 +175,9 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
         open={isDialogOpen}
         onClose={closeDialog}
         chamado={selectedElement}
+        mode={mode}
+        onSubmit={handleDialogSubmit}
+        currentStatus={selectedElement?.status ?? 'aberto'}
       />
     </Card>
   );
