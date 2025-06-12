@@ -8,4 +8,8 @@ export const navItems = [
   { key: 'settings', title: 'Configurações', href: paths.dashboard.settings, icon: 'gear-six' },
   { key: 'account', title: 'Conta', href: paths.dashboard.account, icon: 'user' },
   // { key: 'error', title: 'Error', href: paths.errors.notFound, icon: 'x-square' },
+  //{ key: 'integrations', title: 'Integrations', href: paths.dashboard.integrations, icon: 'plugs-connected' },
+  { key: 'settings', title: 'Settings', href: paths.dashboard.settings, icon: 'gear-six' },
+  { key: 'chamados', title: 'Chamados', href: paths.dashboard.chamados, icon: 'plugs-connected' },
+  //{ key: 'error', title: 'Error', href: paths.errors.notFound, icon: 'x-square' },
 ] satisfies NavItemConfig[];

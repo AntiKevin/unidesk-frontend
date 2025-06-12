@@ -4,47 +4,18 @@ import Grid from '@mui/material/Unstable_Grid2';
 import dayjs from 'dayjs';
 
 import { config } from '@/config';
-import { Budget } from '@/components/dashboard/overview/budget';
-import { LatestOrders } from '@/components/dashboard/overview/latest-orders';
+import { LatestTickets, Ticket } from '@/components/dashboard/overview/latest-tickets';
 import { LatestProducts } from '@/components/dashboard/overview/latest-products';
-import { Sales } from '@/components/dashboard/overview/sales';
+import { Statistics } from '@/components/dashboard/overview/statistics';
 import { TasksProgress } from '@/components/dashboard/overview/tasks-progress';
-import { TotalCustomers } from '@/components/dashboard/overview/total-customers';
-import { TotalProfit } from '@/components/dashboard/overview/total-profit';
+import { TotalTickets } from '@/components/dashboard/overview/total-tickets';
+import { TotalSolved } from '@/components/dashboard/overview/total-solved';
 import { Traffic } from '@/components/dashboard/overview/traffic';
+import { PendingTickets } from '@/components/dashboard/overview/pending-tickets';
 
 export const metadata = { title: `Overview | Dashboard | ${config.site.name}` } satisfies Metadata;
 
-export default function Page(): React.JSX.Element {
-  return (
-    <Grid container spacing={3}>
-      <Grid lg={3} sm={6} xs={12}>
-        <Budget diff={12} trend="up" sx={{ height: '100%' }} value="$24k" />
-      </Grid>
-      <Grid lg={3} sm={6} xs={12}>
-        <TotalCustomers diff={16} trend="down" sx={{ height: '100%' }} value="1.6k" />
-      </Grid>
-      <Grid lg={3} sm={6} xs={12}>
-        <TasksProgress sx={{ height: '100%' }} value={75.5} />
-      </Grid>
-      <Grid lg={3} sm={6} xs={12}>
-        <TotalProfit sx={{ height: '100%' }} value="$15k" />
-      </Grid>
-      <Grid lg={8} xs={12}>
-        <Sales
-          chartSeries={[
-            { name: 'This year', data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20] },
-            { name: 'Last year', data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13] },
-          ]}
-          sx={{ height: '100%' }}
-        />
-      </Grid>
-      <Grid lg={4} md={6} xs={12}>
-        <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
-      </Grid>
-      <Grid lg={4} md={6} xs={12}>
-        <LatestProducts
-          products={[
+const products = [
             {
               id: 'PRD-005',
               name: 'Soja & Co. Eucalyptus',
@@ -75,59 +46,82 @@ export default function Page(): React.JSX.Element {
               image: '/assets/product-1.png',
               updatedAt: dayjs().subtract(10, 'minutes').toDate(),
             },
+          ];
+
+const ticketsData: Ticket[] = [
+            {
+                  id: 'CHAM-001',
+                  titulo: 'Problema de acesso ao sistema acadêmico',
+                  solicitante: { nome: 'João Silva', email: 'joao.silva@email.com' },
+                  departamento: 'Secretaria Acadêmica',
+                  prioridade: 'alta',
+                  status: 'aberto',
+                  criadoEm: dayjs().subtract(2, 'hour').toDate()
+                },
+                {
+                  id: 'CHAM-002',
+                  titulo: 'Solicitação de material didático',
+                  solicitante: { nome: 'Maria Santos', email: 'maria.santos@email.com' },
+                  departamento: 'Biblioteca',
+                  prioridade: 'media',
+                  status: 'emAndamento',
+                  criadoEm: dayjs().subtract(1, 'day').toDate()
+                },
+                {
+                  id: 'CHAM-003',
+                  titulo: 'Manutenção em equipamento de laboratório',
+                  solicitante: { nome: 'Carlos Pereira', email: 'carlos.pereira@email.com' },
+                  departamento: 'Laboratório de Química',
+                  prioridade: 'critica',
+                  status: 'emAndamento',
+                  criadoEm: dayjs().subtract(3, 'day').toDate()
+                },
+                {
+                  id: 'CHAM-004',
+                  titulo: 'Dúvida sobre matrícula',
+                  solicitante: { nome: 'Ana Oliveira', email: 'ana.oliveira@email.com' },
+                  departamento: 'Secretaria Acadêmica',
+                  prioridade: 'baixa',
+                  status: 'resolvido',
+                  criadoEm: dayjs().subtract(5, 'day').toDate()
+                },
+              
+          ];
+
+const percentTicketsOpenAndInQueue = ticketsData.filter(ticket => ["emAndamento", "aberto"].includes(ticket.status)).length/ ticketsData.length * 100;
+const solvedTickets = ticketsData.filter(ticket => ["resolvido"].includes(ticket.status)).length;
+const openTickets = ticketsData.filter(ticket => ["aberto"].includes(ticket.status)).length;
+const inProgressTickets = ticketsData.filter(ticket => ["emAndamento"].includes(ticket.status)).length;
+
+export default function Page(): React.JSX.Element {
+  return (
+    <Grid container spacing={3}>
+      
+      <Grid lg={3} sm={6} xs={12}>
+        <TotalTickets diff={16} trend="down" sx={{ height: '100%' }} value={ticketsData.length} />
+      </Grid>
+      <Grid lg={3} sm={6} xs={12}>
+        <TasksProgress sx={{ height: '100%' }} value={percentTicketsOpenAndInQueue} />
+      </Grid>
+      <Grid lg={3} sm={6} xs={12}>
+        <PendingTickets diff={14} trend='down' sx={{ height: '100%' }} value={openTickets} />
+      </Grid>
+      <Grid lg={3} sm={6} xs={12}>
+        <TotalSolved sx={{ height: '100%' }} value={solvedTickets} />
+      </Grid>
+      <Grid lg={8} xs={12}>
+        <Statistics
+          chartSeries={[
+            { name: 'Este ano', data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20] },
+            { name: 'Ultimo ano', data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13] },
           ]}
           sx={{ height: '100%' }}
         />
       </Grid>
-      <Grid lg={8} md={12} xs={12}>
-        <LatestOrders
-          orders={[
-            {
-              id: 'ORD-007',
-              customer: { name: 'Ekaterina Tankova' },
-              amount: 30.5,
-              status: 'pending',
-              createdAt: dayjs().subtract(10, 'minutes').toDate(),
-            },
-            {
-              id: 'ORD-006',
-              customer: { name: 'Cao Yu' },
-              amount: 25.1,
-              status: 'delivered',
-              createdAt: dayjs().subtract(10, 'minutes').toDate(),
-            },
-            {
-              id: 'ORD-004',
-              customer: { name: 'Alexa Richardson' },
-              amount: 10.99,
-              status: 'refunded',
-              createdAt: dayjs().subtract(10, 'minutes').toDate(),
-            },
-            {
-              id: 'ORD-003',
-              customer: { name: 'Anje Keizer' },
-              amount: 96.43,
-              status: 'pending',
-              createdAt: dayjs().subtract(10, 'minutes').toDate(),
-            },
-            {
-              id: 'ORD-002',
-              customer: { name: 'Clarke Gillebert' },
-              amount: 32.54,
-              status: 'delivered',
-              createdAt: dayjs().subtract(10, 'minutes').toDate(),
-            },
-            {
-              id: 'ORD-001',
-              customer: { name: 'Adam Denisov' },
-              amount: 16.76,
-              status: 'delivered',
-              createdAt: dayjs().subtract(10, 'minutes').toDate(),
-            },
-          ]}
-          sx={{ height: '100%' }}
-        />
+      <Grid lg={4} md={6} xs={12}>
+        <Traffic chartSeries={[openTickets, inProgressTickets, solvedTickets]}  labels={['Abertos', 'Andamento', 'Resolvidos']} sx={{ height: '100%' }} />
       </Grid>
+      
     </Grid>
   );
 }
