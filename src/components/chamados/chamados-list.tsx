@@ -102,10 +102,7 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
 
   const handleDialogSubmit = (status: string) => {
     console.log('Mudança do ticket: ', status);
-
-    // Aqui você pode:
-    // - Atualizar o estado local
-    // - Enviar uma requisição para API (ex: via fetch ou axios)
+    
   };
 
   return (
