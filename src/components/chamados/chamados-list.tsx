@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -14,6 +15,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import dayjs from 'dayjs';
+import { Stack } from '@mui/system';
+import { IconButton, Tooltip } from '@mui/material';
+import { MagnifyingGlass, NotePencil } from '@phosphor-icons/react/dist/ssr';
+import DialogCustom from './dialog-custom';
 
 const statusMap = {
   aberto: { label: 'Aberto', color: 'warning' },
@@ -80,6 +85,19 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
 
   const dadosChamados = chamados.length > 0 ? chamados : exemplosChamados;
 
+  const [selectedElement, setSelectedElement] = React.useState<Chamado | null>(null);
+  const [isDialogOpen, setDialogOpen] = React.useState(false);
+
+  const openDialog = (chamado: Chamado) => {
+    setSelectedElement(chamado);
+    setDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setSelectedElement(null);
+    setDialogOpen(false);
+  };
+
   return (
     <Card sx={sx}>
       <CardHeader title="Chamados recentes" />
@@ -94,6 +112,7 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
               <TableCell>Departamento</TableCell>
               <TableCell sortDirection="desc">Data</TableCell>
               <TableCell>Status</TableCell>
+              <TableCell>Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -109,6 +128,20 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
                   <TableCell>{dayjs(chamado.criadoEm).format('DD/MM/YYYY HH:mm')}</TableCell>
                   <TableCell>
                     <Chip color={color} label={label} size="small" />
+                  </TableCell>
+                  <TableCell>
+                    <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
+                      <Tooltip title="Search">
+                          <IconButton onClick={() => openDialog(chamado)}>
+                            <MagnifyingGlass />
+                          </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Edit">
+                          <IconButton>
+                            <NotePencil/>
+                          </IconButton>
+                      </Tooltip>
+                    </Stack>
                   </TableCell>
                 </TableRow>
               );
@@ -127,6 +160,12 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
           Ver todos
         </Button>
       </CardActions>
+
+      <DialogCustom 
+        open={isDialogOpen}
+        onClose={closeDialog}
+        chamado={selectedElement}
+      />
     </Card>
   );
 }
