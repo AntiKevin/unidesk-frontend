@@ -9,6 +9,7 @@ export const paths = {
     settings: '/dashboard/settings',
     chamados: '/dashboard/chamados',
     novoChamado: '/dashboard/chamados/novo',
+    viewFaq: '/dashboard/faq'
   },
   errors: { notFound: '/errors/not-found' },
 } as const;

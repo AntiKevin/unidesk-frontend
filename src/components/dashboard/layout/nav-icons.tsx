@@ -1,3 +1,4 @@
+import { Headset } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react/dist/lib/types';
 import { Ticket } from '@phosphor-icons/react/dist/ssr';
 import { ChartPie as ChartPieIcon } from '@phosphor-icons/react/dist/ssr/ChartPie';
@@ -13,6 +14,7 @@ export const navIcons = {
   'plugs-connected': PlugsConnectedIcon,
   'x-square': XSquare,
   'ticket': Ticket,
+  'headset': Headset,
   user: UserIcon,
   users: UsersIcon,
 } as Record<string, Icon>;

@@ -8,6 +8,7 @@ export const navItems = [
   // { key: 'integrations', title: 'Integrations', href: paths.dashboard.integrations, icon: 'plugs-connected' },
   { key: 'settings', title: 'Configurações', href: paths.dashboard.settings, icon: 'gear-six' },
   { key: 'account', title: 'Conta', href: paths.dashboard.account, icon: 'user' },
+  { key: 'faq', title: 'FAQ', href: paths.dashboard.viewFaq, icon: 'headset' },
   // { key: 'error', title: 'Error', href: paths.errors.notFound, icon: 'x-square' },
   //{ key: 'integrations', title: 'Integrations', href: paths.dashboard.integrations, icon: 'plugs-connected' },
   //{ key: 'settings', title: 'Settings', href: paths.dashboard.settings, icon: 'gear-six' },
