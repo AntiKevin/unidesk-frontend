@@ -105,6 +105,7 @@ export function SideNav(): React.JSX.Element {
             }
             startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} 
             variant="contained"
+            href={paths.dashboard.novoChamado}
           >
             Novo Chamado
           </Button>

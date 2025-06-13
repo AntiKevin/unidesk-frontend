@@ -8,6 +8,7 @@ export const paths = {
     integrations: '/dashboard/integrations',
     settings: '/dashboard/settings',
     chamados: '/dashboard/chamados',
+    novoChamado: '/dashboard/chamados/novo',
   },
   errors: { notFound: '/errors/not-found' },
 } as const;
