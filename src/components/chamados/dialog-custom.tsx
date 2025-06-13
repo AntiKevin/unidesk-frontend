@@ -128,9 +128,7 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
           )}
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={onClose}>
-            Fechar
-          </Button>
+          
           {mode === 'view' && (
             <Button onClick={handleClick}>
               Alterar
