@@ -101,6 +101,7 @@ export function SideNav(): React.JSX.Element {
                 display: 'flex',
                 gap: 1,
                 px: 6,
+                mb: 1
               }
             }
             startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} 
