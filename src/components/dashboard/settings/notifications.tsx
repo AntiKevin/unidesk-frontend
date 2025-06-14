@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -13,6 +12,7 @@ import FormGroup from '@mui/material/FormGroup';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
+import * as React from 'react';
 
 export function Notifications(): React.JSX.Element {
   return (
@@ -22,7 +22,7 @@ export function Notifications(): React.JSX.Element {
       }}
     >
       <Card>
-        <CardHeader subheader="Manage the notifications" title="Notifications" />
+        <CardHeader subheader="Gerencie as Notificações" title="Notificações" />
         <Divider />
         <CardContent>
           <Grid container spacing={6} wrap="wrap">
@@ -30,17 +30,8 @@ export function Notifications(): React.JSX.Element {
               <Stack spacing={1}>
                 <Typography variant="h6">Email</Typography>
                 <FormGroup>
-                  <FormControlLabel control={<Checkbox defaultChecked />} label="Product updates" />
-                  <FormControlLabel control={<Checkbox />} label="Security updates" />
-                </FormGroup>
-              </Stack>
-            </Grid>
-            <Grid md={4} sm={6} xs={12}>
-              <Stack spacing={1}>
-                <Typography variant="h6">Phone</Typography>
-                <FormGroup>
-                  <FormControlLabel control={<Checkbox defaultChecked />} label="Email" />
-                  <FormControlLabel control={<Checkbox />} label="Security updates" />
+                  <FormControlLabel control={<Checkbox defaultChecked />} label="Receber Chamados" />
+                  <FormControlLabel control={<Checkbox />} label="Receber Atualizações" />
                 </FormGroup>
               </Stack>
             </Grid>
@@ -48,7 +39,7 @@ export function Notifications(): React.JSX.Element {
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">Save changes</Button>
+          <Button variant="contained">Salvar</Button>
         </CardActions>
       </Card>
     </form>
