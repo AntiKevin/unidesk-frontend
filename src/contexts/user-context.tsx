@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 
-import type { User } from '@/types/user';
 import { authClient } from '@/lib/auth/client';
 import { logger } from '@/lib/default-logger';
+import type { User } from '@/types/user';
 
 export interface UserContextValue {
   user: User | null;
