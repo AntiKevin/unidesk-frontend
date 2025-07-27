@@ -31,8 +31,8 @@ export interface SignInWithOAuthParams {
 }
 
 export interface SignInWithPasswordParams {
-  email: string;
-  password: string;
+  usuario: string;
+  senha: string;
 }
 
 export interface ResetPasswordParams {
@@ -55,11 +55,11 @@ class AuthClient {
   }
 
   async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string }> {
-    const { email, password } = params;
+    const { usuario, senha } = params;
     try {
       const response = await axios.post(
         `${config.apiBaseUrl}/auth/login`,
-        { usuario: email, senha: password },
+        { usuario, senha },
         { headers: { 'Content-Type': 'application/json' } }
       );
       if (response.status !== 200) {
@@ -90,15 +90,26 @@ class AuthClient {
       return { data: null };
     }
     try {
-      const response = await axios.get<{ user: User }>(
+      const response = await axios.get(
         `${config.apiBaseUrl}/auth/me`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.status !== 200) {
         return { data: null, error: 'Não foi possível obter o usuário' };
       }
-      return { data: response.data.user };
+
+      const user: User = {
+        id: response.data.idUsuario,
+        avatar: response.data.avatar || '/assets/avatar.png',
+        firstName: response.data.nome.split(' ')[0] || '',
+        lastName: response.data.nome.split(' ')[1] || '',
+        email: response.data.email,
+        role: response.data.role || 'user',
+      }
+
+      return { data: user };
     } catch (err: any) {
+      console.error('Erro ao obter usuário:', err);
       return { data: null, error: err.response?.data?.message ?? 'Erro ao obter usuário' };
     }
   }

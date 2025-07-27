@@ -23,13 +23,13 @@ import { authClient } from '@/lib/auth/client';
 import { paths } from '@/paths';
 
 const schema = zod.object({
-  email: zod.string().min(1, { message: 'Email is required' }).email(),
-  password: zod.string().min(1, { message: 'Password is required' }),
+  usuario: zod.string().min(1, { message: 'Usuário é obrigatório' }),
+  senha: zod.string().min(1, { message: 'Senha é obrigatória' }),
 });
 
 type Values = zod.infer<typeof schema>;
 
-const defaultValues = { email: 'fulano@ufma.br', password: 'Secret1' } satisfies Values;
+const defaultValues = { usuario: 'fulano.silva', senha: 'Secret1' } satisfies Values;
 
 export function SignInForm(): React.JSX.Element {
   const router = useRouter();
@@ -84,20 +84,20 @@ export function SignInForm(): React.JSX.Element {
         <Stack spacing={2}>
           <Controller
             control={control}
-            name="email"
+            name="usuario"
             render={({ field }) => (
-              <FormControl error={Boolean(errors.email)}>
-                <InputLabel>Email</InputLabel>
-                <OutlinedInput {...field} label="Email" type="email" />
-                {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
+              <FormControl error={Boolean(errors.usuario)}>
+                <InputLabel>Usuário</InputLabel>
+                <OutlinedInput {...field} label="Usuário" type="text" />
+                {errors.usuario ? <FormHelperText>{errors.usuario.message}</FormHelperText> : null}
               </FormControl>
             )}
           />
           <Controller
             control={control}
-            name="password"
+            name="senha"
             render={({ field }) => (
-              <FormControl error={Boolean(errors.password)}>
+              <FormControl error={Boolean(errors.senha)}>
                 <InputLabel>Senha</InputLabel>
                 <OutlinedInput
                   {...field}
@@ -123,7 +123,7 @@ export function SignInForm(): React.JSX.Element {
                   label="Senha"
                   type={showPassword ? 'text' : 'password'}
                 />
-                {errors.password ? <FormHelperText>{errors.password.message}</FormHelperText> : null}
+                {errors.senha ? <FormHelperText>{errors.senha.message}</FormHelperText> : null}
               </FormControl>
             )}
           />

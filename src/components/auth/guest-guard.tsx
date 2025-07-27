@@ -1,12 +1,12 @@
 'use client';
 
-import * as React from 'react';
-import { useRouter } from 'next/navigation';
 import Alert from '@mui/material/Alert';
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
 
-import { paths } from '@/paths';
-import { logger } from '@/lib/default-logger';
 import { useUser } from '@/hooks/use-user';
+import { logger } from '@/lib/default-logger';
+import { paths } from '@/paths';
 
 export interface GuestGuardProps {
   children: React.ReactNode;
@@ -21,6 +21,7 @@ export function GuestGuard({ children }: GuestGuardProps): React.JSX.Element | n
     if (isLoading) {
       return;
     }
+    console.log(user)
 
     if (error) {
       setIsChecking(false);
