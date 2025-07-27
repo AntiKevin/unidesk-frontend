@@ -1,6 +1,8 @@
 'use client';
 
+import { config } from '@/config';
 import type { User } from '@/types/user';
+import axios from 'axios';
 
 function generateToken(): string {
   const arr = new Uint8Array(12);
@@ -14,6 +16,7 @@ const user = {
   firstName: 'Fulano',
   lastName: 'Silva',
   email: 'fulano@ufma.br',
+  role: 'admin',
 } satisfies User;
 
 export interface SignUpParams {
@@ -53,18 +56,24 @@ class AuthClient {
 
   async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string }> {
     const { email, password } = params;
-
-    // Make API request
-
-    // We do not handle the API, so we'll check if the credentials match with the hardcoded ones.
-    if (email !== 'fulano@ufma.br' || password !== 'Secret1') {
-      return { error: 'Invalid credentials' };
+    try {
+      const response = await axios.post(
+        `${config.apiBaseUrl}/auth/login`,
+        { usuario: email, senha: password },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      if (response.status !== 200) {
+        return { error: 'Credenciais inválidas' };
+      }
+      const { token } = response.data;
+      if (!token) {
+        return { error: 'Token não recebido' };
+      }
+      localStorage.setItem('auth-token', token);
+      return {};
+    } catch (err: any) {
+      return { error: err.response?.data?.message ?? 'Erro ao efetuar login' };
     }
-
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
-
-    return {};
   }
 
   async resetPassword(_: ResetPasswordParams): Promise<{ error?: string }> {
@@ -76,16 +85,22 @@ class AuthClient {
   }
 
   async getUser(): Promise<{ data?: User | null; error?: string }> {
-    // Make API request
-
-    // We do not handle the API, so just check if we have a token in localStorage.
-    const token = localStorage.getItem('custom-auth-token');
-
+    const token = localStorage.getItem('auth-token');
     if (!token) {
       return { data: null };
     }
-
-    return { data: user };
+    try {
+      const response = await axios.get<{ user: User }>(
+        `${config.apiBaseUrl}/auth/me`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (response.status !== 200) {
+        return { data: null, error: 'Não foi possível obter o usuário' };
+      }
+      return { data: response.data.user };
+    } catch (err: any) {
+      return { data: null, error: err.response?.data?.message ?? 'Erro ao obter usuário' };
+    }
   }
 
   async signOut(): Promise<{ error?: string }> {
