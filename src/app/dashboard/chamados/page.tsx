@@ -1,19 +1,34 @@
+"use client";
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import type { Metadata } from 'next';
 import * as React from 'react';
 
 import { ChamadosFilters } from '@/components/chamados/chamados-filters';
 import { ChamadosList } from '@/components/chamados/chamados-list';
 import { ChamadosStats } from '@/components/chamados/chamados-stats';
-import { config } from '@/config';
 import { paths } from '@/paths';
-
-export const metadata = { title: `Chamados | Dashboard | ${config.site.name}` } satisfies Metadata;
+import TicketService from '@/services/TicketService';
 
 export default function Page(): React.JSX.Element {
+    // Define o estado para armazenar os chamados
+    const [tickets, setTickets] = React.useState<Ticket[]>([]);
+
+    // Realiza a busca dos chamados na API
+    const getChamados = async () => {
+        try {
+            const tickets = await TicketService.getTickets();
+            setTickets(tickets);
+        } catch (error) {
+            console.error('Erro ao buscar chamados:', error);
+        }
+    }
+
+    React.useEffect(() => {
+        getChamados();
+    }, []);
+    
     return (
         <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
@@ -33,7 +48,7 @@ export default function Page(): React.JSX.Element {
 
             <ChamadosStats />
             <ChamadosFilters />
-            <ChamadosList />
+            <ChamadosList chamados={tickets} />
         </Stack>
     );
 }

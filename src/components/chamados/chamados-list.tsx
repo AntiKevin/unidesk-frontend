@@ -1,5 +1,5 @@
 'use client';
-import * as React from 'react';
+import { IconButton, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -13,83 +13,44 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { Stack } from '@mui/system';
+import { Check, MagnifyingGlass } from '@phosphor-icons/react/dist/ssr';
 import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import dayjs from 'dayjs';
-import { Stack } from '@mui/system';
-import { IconButton, Tooltip } from '@mui/material';
-import { Check, MagnifyingGlass } from '@phosphor-icons/react/dist/ssr';
+import * as React from 'react';
 import DialogCustom from './dialog-custom';
 
+import { exemplosChamados } from './chamados-mock';
+import type { status } from './dialog-custom';
+
 const statusMap = {
-  aberto: { label: 'Aberto', color: 'warning' },
-  emAndamento: { label: 'Em Andamento', color: 'info' },
-  resolvido: { label: 'Resolvido', color: 'success' },
-  fechado: { label: 'Fechado', color: 'default' },
+  1: { label: 'Aberto', color: 'warning' },
+  2: { label: 'Em Andamento', color: 'info' },
+  3: { label: 'Resolvido', color: 'success' },
+  4: { label: 'Fechado', color: 'default' },
 } as const;
 
-export interface Chamado {
-  id: string;
-  titulo: string;
-  solicitante: { nome: string; email: string };
-  departamento: string;
-  prioridade: 'baixa' | 'media' | 'alta' | 'critica';
-  status: 'aberto' | 'emAndamento' | 'resolvido' | 'fechado';
-  criadoEm: Date;
-}
+const statusKeyMap = {
+  aberto: 1,
+  emAndamento: 2,
+  resolvido: 3,
+  fechado: 4,
+} as const;
 
 export interface ChamadosListProps {
-  chamados?: Chamado[];
+  chamados?: Ticket[];
   sx?: SxProps;
 }
 
 export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JSX.Element {
-  // Dados de exemplo
-  const exemplosChamados: Chamado[] = [
-    {
-      id: 'CHAM-001',
-      titulo: 'Problema de acesso ao sistema acadêmico',
-      solicitante: { nome: 'João Silva', email: 'joao.silva@email.com' },
-      departamento: 'Secretaria Acadêmica',
-      prioridade: 'alta',
-      status: 'aberto',
-      criadoEm: dayjs().subtract(2, 'hour').toDate()
-    },
-    {
-      id: 'CHAM-002',
-      titulo: 'Solicitação de material didático',
-      solicitante: { nome: 'Maria Santos', email: 'maria.santos@email.com' },
-      departamento: 'Biblioteca',
-      prioridade: 'media',
-      status: 'emAndamento',
-      criadoEm: dayjs().subtract(1, 'day').toDate()
-    },
-    {
-      id: 'CHAM-003',
-      titulo: 'Manutenção em equipamento de laboratório',
-      solicitante: { nome: 'Carlos Pereira', email: 'carlos.pereira@email.com' },
-      departamento: 'Laboratório de Química',
-      prioridade: 'critica',
-      status: 'emAndamento',
-      criadoEm: dayjs().subtract(3, 'day').toDate()
-    },
-    {
-      id: 'CHAM-004',
-      titulo: 'Dúvida sobre matrícula',
-      solicitante: { nome: 'Ana Oliveira', email: 'ana.oliveira@email.com' },
-      departamento: 'Secretaria Acadêmica',
-      prioridade: 'baixa',
-      status: 'resolvido',
-      criadoEm: dayjs().subtract(5, 'day').toDate()
-    },
-  ];
 
   const dadosChamados = chamados.length > 0 ? chamados : exemplosChamados;
 
-  const [selectedElement, setSelectedElement] = React.useState<Chamado | null>(null);
+  const [selectedElement, setSelectedElement] = React.useState<Ticket | null>(null);
   const [isDialogOpen, setDialogOpen] = React.useState(false);
   const [mode, setMode] = React.useState<'view' | 'finalize'>('view');
 
-  const openDialog = (ticket: Chamado, mode: 'view' | 'finalize') => {
+  const openDialog = (ticket: Ticket, mode: 'view' | 'finalize') => {
     setSelectedElement(ticket);
     setMode(mode);
     setDialogOpen(true);
@@ -124,15 +85,15 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
           </TableHead>
           <TableBody>
             {dadosChamados.map((chamado) => {
-              const { label, color } = statusMap[chamado.status];
+			  const { label, color } = statusMap[chamado.status.idStatus as keyof typeof statusMap] || { label: 'Desconhecido', color: 'default' };
 
               return (
                 <TableRow hover key={chamado.id}>
                   <TableCell>{chamado.id}</TableCell>
                   <TableCell>{chamado.titulo}</TableCell>
-                  <TableCell>{chamado.solicitante.nome}</TableCell>
-                  <TableCell>{chamado.departamento}</TableCell>
-                  <TableCell>{dayjs(chamado.criadoEm).format('DD/MM/YYYY HH:mm')}</TableCell>
+                  <TableCell>{chamado.aluno.nome}</TableCell>
+                  <TableCell>{chamado.aluno.curso.nome}</TableCell>
+                  <TableCell>{dayjs(chamado.dataCriacao).format('DD/MM/YYYY HH:mm')}</TableCell>
                   <TableCell>
                     <Chip color={color} label={label} size="small" />
                   </TableCell>
@@ -174,7 +135,7 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
         chamado={selectedElement}
         mode={mode}
         onSubmit={handleDialogSubmit}
-        currentStatus={selectedElement?.status ?? 'aberto'}
+        currentStatus={selectedElement?.status?.nome as status ?? "Aberto"}
       />
     </Card>
   );
