@@ -46,7 +46,7 @@ export default function Page(): React.JSX.Element {
                 </div>
             </Stack>
 
-            <ChamadosStats />
+            <ChamadosStats chamados={tickets} />
             <ChamadosFilters />
             <ChamadosList chamados={tickets} />
         </Stack>
