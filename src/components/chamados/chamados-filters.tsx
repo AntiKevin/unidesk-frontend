@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -11,6 +10,7 @@ import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
+import * as React from 'react';
 
 export function ChamadosFilters(): React.JSX.Element {
   return (
@@ -42,11 +42,11 @@ export function ChamadosFilters(): React.JSX.Element {
           <FormControl sx={{ flexGrow: 1, maxWidth: '100%', width: 240 }}>
             <InputLabel>Status</InputLabel>
             <Select input={<OutlinedInput label="Status" />} value="">
-              <MenuItem value="todos">Todos</MenuItem>
-              <MenuItem value="aberto">Aberto</MenuItem>
-              <MenuItem value="emAndamento">Em Andamento</MenuItem>
-              <MenuItem value="resolvido">Resolvido</MenuItem>
-              <MenuItem value="fechado">Fechado</MenuItem>
+              <MenuItem value="">Todos</MenuItem>
+              <MenuItem value="Aberto">Aberto</MenuItem>
+              <MenuItem value="Em Andamento">Em Andamento</MenuItem>
+              <MenuItem value="Resolvido">Resolvido</MenuItem>
+              <MenuItem value="Fechado">Fechado</MenuItem>
             </Select>
           </FormControl>
           <FormControl sx={{ flexGrow: 1, maxWidth: '100%', width: 240 }}>
