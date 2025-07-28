@@ -1,7 +1,6 @@
 'use client';
 
 import { config } from '@/config';
-import type { User } from '@/types/user';
 import axios from 'axios';
 
 function generateToken(): string {
@@ -115,7 +114,7 @@ class AuthClient {
   }
 
   async signOut(): Promise<{ error?: string }> {
-    localStorage.removeItem('custom-auth-token');
+    localStorage.removeItem('auth-token');
 
     return {};
   }
