@@ -16,7 +16,6 @@ import TableRow from '@mui/material/TableRow';
 import { Stack } from '@mui/system';
 import { Check, MagnifyingGlass } from '@phosphor-icons/react/dist/ssr';
 import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
-import dayjs from 'dayjs';
 import * as React from 'react';
 import DialogCustom from './dialog-custom';
 
@@ -93,7 +92,7 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
                   <TableCell>{chamado.titulo}</TableCell>
                   <TableCell>{chamado.aluno.nome}</TableCell>
                   <TableCell>{chamado.aluno.curso.nome}</TableCell>
-                  <TableCell>{dayjs(chamado.dataCriacao).format('DD/MM/YYYY HH:mm')}</TableCell>
+                  <TableCell>{new Date(chamado.dataCriacao * 1000).toLocaleString()}</TableCell>
                   <TableCell>
                     <Chip color={color} label={label} size="small" />
                   </TableCell>

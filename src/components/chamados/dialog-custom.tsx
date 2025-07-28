@@ -11,7 +11,6 @@ import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
 import { Pen } from '@phosphor-icons/react';
 import { X } from '@phosphor-icons/react/dist/ssr';
-import dayjs from 'dayjs';
 import * as React from 'react';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -91,7 +90,7 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
 
           </Typography>
           <Typography gutterBottom>
-            <strong>Data:</strong> {dayjs(chamado?.dataCriacao).format('DD/MM/YYYY HH:mm')}
+            <strong>Data:</strong> {chamado?.dataCriacao ? new Date(chamado?.dataCriacao * 1000).toLocaleString() : 'N/A'}
           </Typography>
           <Typography gutterBottom>
             <strong>Descrição:</strong> {chamado?.descricao || 'N/A'}
