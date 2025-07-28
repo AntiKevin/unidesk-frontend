@@ -13,3 +13,20 @@ interface Ticket {
   prioridade: Prioridade
   categoria: Categoria
 }
+
+interface TicketForm {
+  ticketInput: TicketInput
+  file: string
+}
+
+interface TicketInput {
+  titulo: string
+  descricao: string
+  idCoordenacao: number
+  idFuncionario: number
+  idAluno: number
+  idStatus: number
+  idPrioridade: number
+  idCategoria: number
+}
+
