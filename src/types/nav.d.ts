@@ -1,4 +1,4 @@
-export interface NavItemConfig {
+interface NavItemConfig {
   key: string;
   title?: string;
   disabled?: boolean;
