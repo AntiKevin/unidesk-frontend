@@ -1,19 +1,18 @@
 'use client';
-import Typography from '@mui/material/Typography';
-import * as React from 'react';
+import { FormControl, MenuItem, Select, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
-import { X } from '@phosphor-icons/react/dist/ssr';
-import { Chamado } from './chamados-list';
-import dayjs from 'dayjs';
-import { FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
 import { Pen } from '@phosphor-icons/react';
+import { X } from '@phosphor-icons/react/dist/ssr';
+import dayjs from 'dayjs';
+import * as React from 'react';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -24,18 +23,20 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+export type status = 'Aberto' | 'Em Andamento' | 'Resolvido' | 'Fechado';
+
 type Props = {
   open: boolean;
   onClose: () => void;
-  chamado: Chamado | null;
+  chamado: Ticket | null;
   mode: 'view' | 'finalize';
-  currentStatus: 'aberto' | 'emAndamento' | 'resolvido' | 'fechado';
+  currentStatus: status
   onSubmit?: (status: string) => void;
 }
 
 export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, currentStatus}: Props ) {
 
-  const [status, setStatus] = React.useState<'aberto' | 'emAndamento' | 'resolvido' | 'fechado'>(currentStatus);
+  const [status, setStatus] = React.useState<status>(currentStatus);
 
   React.useEffect(() => {
     setStatus(currentStatus);
@@ -43,7 +44,6 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
 
   
   const handleFinalize = () => {
-    // Codigo para finalizar o chamado e mandar para o pai(chamados-list) tratar...
     onClose();
   }
 
@@ -87,25 +87,24 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
 
           </Typography>
           <Typography gutterBottom>
-            <strong>E-mail:</strong> {chamado?.solicitante.email}
+            <strong>E-mail:</strong> {chamado?.aluno?.email || chamado?.funcionario?.email || 'N/A'}
 
           </Typography>
           <Typography gutterBottom>
-            <strong>Data:</strong> {dayjs(chamado?.criadoEm).format('DD/MM/YYYY HH:mm')}
+            <strong>Data:</strong> {dayjs(chamado?.dataCriacao).format('DD/MM/YYYY HH:mm')}
           </Typography>
           <Typography gutterBottom>
-            <strong>Descrição:</strong> Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus
-            magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec
-            ullamcorper nulla non metus auctor fringilla.
+            <strong>Descrição:</strong> {chamado?.descricao || 'N/A'}
           </Typography>
           {mode === 'view' && (
             <>
             <strong>Status: </strong>
             <FormControl sx={{ flexGrow: 1, maxWidth: '100%', width: 240 }}>
-            <Select value={status} onChange={(e) => setStatus(e.target.value as 'aberto' | 'emAndamento' | 'resolvido' | 'fechado')}>
-              <MenuItem value="aberto">Aberto</MenuItem>
-              <MenuItem value="emAndamento">Em Andamento</MenuItem>
-              <MenuItem value="resolvido">Resolvido</MenuItem>
+            <Select value={status} onChange={(e) => setStatus(e.target.value as status)} displayEmpty>
+              <MenuItem value="Aberto">Aberto</MenuItem>
+              <MenuItem value="Em Andamento">Em Andamento</MenuItem>
+              <MenuItem value="Resolvido">Resolvido</MenuItem>
+              <MenuItem value="Fechado">Fechado</MenuItem>
             </Select>
           </FormControl>
 
