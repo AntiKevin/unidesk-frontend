@@ -1,26 +1,57 @@
 "use client";
+import CategoriaService from '@/services/CategoriaService';
+import PrioridadeService from '@/services/PrioridadeService';
 import {
   Button, Card, CardActions, CardContent,
   CardHeader, Divider, FormControl, InputLabel,
   MenuItem, OutlinedInput, Select, Stack
 } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 export function NovoChamadoForm () {
-  const categorias = [
-    { value: 'cat1', label: 'Categoria 1' },
-    { value: 'cat2', label: 'Categoria 2' },
-    { value: 'cat3', label: 'Categoria 3' }
-  ]
 
-  const prioridades = [
-    { value: 'baixa', label: 'Baixa' },
-    { value: 'normal', label: 'Normal' },
-    { value: 'alta', label: 'Alta' },
-    { value: 'urgente', label: 'Urgente' },
-    { value: 'critica', label: 'Crítica' }
-  ]
+  const [categorias, setCategorias] = useState<Categoria[]>([])
+  const [prioridades, setPrioridades] = useState<Prioridade[]>([])
 
-    return (
+  const defaultCategoria = {
+    idCategoria: 1,
+    nome: 'Sem Categoria Definida',
+  }
+
+  const defaultPrioridade = {
+    idPrioridade: 1,
+    nivel: 'Sem Prioridade Definida',
+  };
+
+
+  // Funções para buscar categorias
+  async function fetchCategorias() {
+    try {
+      const response = await CategoriaService.getCategorias();
+      setCategorias(response);
+    } catch (error) {
+      console.error("Error fetching categorias:", error);
+    }
+  }
+
+  // Função para buscar prioridades
+  async function fetchPrioridades() {
+    try {
+      const response = await PrioridadeService.getPrioridades();
+      setPrioridades(response);
+    } catch (error) {
+      console.error("Error fetching prioridades:", error);
+    }
+  }
+
+  useEffect(() => {
+    // Chama as funções para buscar categorias e prioridades
+    // quando o componente for montado
+    fetchCategorias();
+    fetchPrioridades();
+  }, []);
+
+  return (
     <form
       onSubmit={(event) => {
         event.preventDefault();
@@ -43,10 +74,10 @@ export function NovoChamadoForm () {
           <Stack flexDirection="row" spacing={3} sx={{ mt: 2 }}>
             <FormControl fullWidth>
                 <InputLabel>Categoria</InputLabel>
-                <Select defaultValue={categorias[0].value} label="State" name="state" variant="outlined">
+                <Select defaultValue={1} label="Categoria" name="categoria" variant="outlined">
                   {categorias.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                    <MenuItem key={option.idCategoria} value={option.idCategoria}>
+                      {option.nome}
                     </MenuItem>
                   ))}
                 </Select>
@@ -54,10 +85,10 @@ export function NovoChamadoForm () {
             <FormControl fullWidth>
               {/* Select de prioridade */}
               <InputLabel>Prioridade</InputLabel>
-              <Select defaultValue={prioridades[0].value} label="Prioridade" name="prioridade" variant="outlined">
+              <Select defaultValue={1} label="Prioridade" name="prioridade" variant="outlined">
                   {prioridades.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                    <MenuItem key={option.idPrioridade} value={option.idPrioridade}>
+                      {option.nivel}
                     </MenuItem>
                   ))}
               </Select>
