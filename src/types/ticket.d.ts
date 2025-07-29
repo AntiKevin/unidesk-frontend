@@ -14,16 +14,10 @@ interface Ticket {
   categoria: Categoria
 }
 
-interface TicketForm {
-  ticketInput: TicketInput
-  file: string
-}
-
-interface TicketInput {
+interface TicketCreate {
   titulo: string
   descricao: string
   idCoordenacao: number
-  idFuncionario: number
   idAluno: number
   idStatus: number
   idPrioridade: number
