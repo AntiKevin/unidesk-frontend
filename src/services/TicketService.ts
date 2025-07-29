@@ -11,8 +11,14 @@ const mapTicketId = (ticket: any): Ticket => {
 };
 
 const TicketService = {
-  createTicket: async (data: any) => {
-    // Implementation for creating a ticket
+  createTicket: async (data: TicketCreate): Promise<Ticket> => {
+    try {
+      const response = await api.post<Ticket>("/tickets", data);
+      return mapTicketId(response.data);
+    } catch (error) {
+      console.error("Error creating ticket:", error);
+      throw error;
+    }
   },
   getTickets: async (page: number = 0, size: number = 10): Promise<Ticket[]> => {
     try {
