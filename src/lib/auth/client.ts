@@ -2,6 +2,7 @@
 
 import { config } from '@/config';
 import axios from 'axios';
+import api from '../axios';
 
 function generateToken(): string {
   const arr = new Uint8Array(12);
@@ -15,7 +16,7 @@ const user = {
   firstName: 'Fulano',
   lastName: 'Silva',
   email: 'fulano@ufma.br',
-  role: 'admin',
+  role: 'ADMIN',
 } satisfies User;
 
 export interface SignUpParams {
@@ -89,10 +90,7 @@ class AuthClient {
       return { data: null };
     }
     try {
-      const response = await axios.get(
-        `${config.apiBaseUrl}/auth/me`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await api.get(`/auth/me`);
       if (response.status !== 200) {
         return { data: null, error: 'Não foi possível obter o usuário' };
       }
