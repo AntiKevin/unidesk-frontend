@@ -1,1 +1,1 @@
-type Role = 'aluno' | 'coordenador' | 'funcionario-coordenacao' | 'admin';
+type Role = 'ALUNO' | 'COORDENADOR' | 'FUNCIONARIO-COORDENACAO' | 'ADMIN';
