@@ -24,7 +24,7 @@ api.interceptors.response.use(
         return response;
     },
     error => {
-        if (error.response.data && error.response.data.message === JWTERRORMESSAGE && error.response.status === 500) {
+        if (error.response && error.response.status === 401) {
             localStorage.removeItem('auth-token');
             window.location.reload();
         }
