@@ -1,4 +1,5 @@
 'use client';
+import StatusService from '@/services/statusService';
 import { FormControl, MenuItem, Select, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -22,24 +23,38 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export type status = 'Aberto' | 'Em Andamento' | 'Resolvido' | 'Fechado';
 
 type Props = {
   open: boolean;
   onClose: () => void;
   chamado: Ticket | null;
   mode: 'view' | 'finalize';
-  currentStatus: status
-  onSubmit?: (status: string) => void;
+  currentStatus: Status
+  onSubmit?: (idStatus: number) => void;
 }
 
 export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, currentStatus}: Props ) {
 
-  const [status, setStatus] = React.useState<status>(currentStatus);
+  const [status, setStatus] = React.useState<Status>(currentStatus);
+  const [statusOptions, setStatusOptions] = React.useState<Status[]>([]);
+
+  async function fetchStatusOptions() {
+    try {
+      const options = await StatusService.getStatus();
+      setStatusOptions(options);
+    } catch (error) {
+      console.error("Error fetching status options:", error);
+    }
+  }
 
   React.useEffect(() => {
     setStatus(currentStatus);
   }, [currentStatus])
+
+  // Obtem as opções de status quando o componente é montado
+  React.useEffect(() => {
+    fetchStatusOptions();
+  }, []);
 
   
   const handleFinalize = () => {
@@ -48,7 +63,7 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
 
   const handleClick = () => {
     if(onSubmit) {
-      onSubmit(status)
+      onSubmit(status.idStatus)
     }
     onClose()
   }
@@ -97,15 +112,23 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
           </Typography>
           {mode === 'view' && (
             <>
-            <strong>Status: </strong>
-            <FormControl sx={{ flexGrow: 1, maxWidth: '100%', width: 240 }}>
-            <Select value={status} onChange={(e) => setStatus(e.target.value as status)} displayEmpty>
-              <MenuItem value="Aberto">Aberto</MenuItem>
-              <MenuItem value="Em Andamento">Em Andamento</MenuItem>
-              <MenuItem value="Resolvido">Resolvido</MenuItem>
-              <MenuItem value="Fechado">Fechado</MenuItem>
-            </Select>
-          </FormControl>
+              <strong>Status: </strong>
+              <FormControl sx={{ flexGrow: 1, maxWidth: '100%', width: 240 }}>
+                <Select
+                  value={status.idStatus}
+                  onChange={(e) => {
+                    const sel = statusOptions.find(s => s.idStatus === Number(e.target.value));
+                    if (sel) setStatus(sel);
+                  }}
+                  displayEmpty
+                >
+                  {statusOptions.map(opt => (
+                    <MenuItem key={opt.idStatus} value={opt.idStatus}>
+                      {opt.nome}
+                    </MenuItem>
+                  ))}
+               </Select>
+             </FormControl>
 
             </>
           )}

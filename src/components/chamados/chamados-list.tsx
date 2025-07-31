@@ -19,8 +19,10 @@ import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/Arr
 import * as React from 'react';
 import DialogCustom from './dialog-custom';
 
+import TicketService from '@/services/TicketService';
+import { useRouter } from 'next/navigation';
 import { exemplosChamados } from './chamados-mock';
-import type { status } from './dialog-custom';
+
 
 const statusMap = {
   1: { label: 'Aberto', color: 'warning' },
@@ -45,6 +47,8 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
 
   const dadosChamados = chamados.length > 0 ? chamados : exemplosChamados;
 
+  const router = useRouter();
+
   const [selectedElement, setSelectedElement] = React.useState<Ticket | null>(null);
   const [isDialogOpen, setDialogOpen] = React.useState(false);
   const [mode, setMode] = React.useState<'view' | 'finalize'>('view');
@@ -60,9 +64,39 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
     setDialogOpen(false);
   };
 
-  const handleDialogSubmit = (status: string) => {
-    console.log('Mudança do ticket: ', status);
-    
+  const handleCurrentStatus = (): Status => {
+    if (selectedElement?.status) {
+      return { 
+        idStatus: selectedElement.status.idStatus, 
+        nome: selectedElement.status.nome 
+      };
+    }
+    return { 
+      idStatus: 0, 
+      nome: 'Status indefinido' 
+    };
+  }
+
+  const handleDialogSubmit = (idStatus: number) => {
+    const payload: TicketCreate = {
+      idStatus,
+      titulo: selectedElement?.titulo || '',
+      descricao: selectedElement?.descricao || '',
+      idCoordenacao: selectedElement?.coordenacao?.idCoordenacao || 0,
+      idAluno: selectedElement?.aluno?.idUsuario || 0,
+      idPrioridade: selectedElement?.prioridade?.idPrioridade || 1,
+      idCategoria: selectedElement?.categoria?.idCategoria || 1,
+    };
+
+    try {
+      if (selectedElement) {
+        TicketService.updateTicket(selectedElement.id, payload);
+        closeDialog();
+        router.push('/dashboard/chamados');
+      }
+    } catch (error) {
+      console.error("Error updating ticket status:", error);
+    }
   };
 
   return (
@@ -134,7 +168,7 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
         chamado={selectedElement}
         mode={mode}
         onSubmit={handleDialogSubmit}
-        currentStatus={selectedElement?.status?.nome as status ?? "Aberto"}
+        currentStatus={handleCurrentStatus()}
       />
     </Card>
   );
