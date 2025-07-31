@@ -36,8 +36,14 @@ const TicketService = {
   getTicket: async (id: string) => {
     // Implementation for fetching a ticket by ID
   },
-  updateTicket: async (id: string, data: any) => {
-    // Implementation for updating a ticket
+  updateTicket: async (id: number, data: TicketCreate) => {
+    try {
+      const response = await api.put<Ticket>(`/tickets/${id}`, data);
+      return mapTicketId(response.data);
+    } catch (error) {
+      console.error("Error updating ticket:", error);
+      throw error;
+    }
   },
   deleteTicket: async (id: string) => {
     // Implementation for deleting a ticket
