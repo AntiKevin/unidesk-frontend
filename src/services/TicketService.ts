@@ -38,10 +38,19 @@ const TicketService = {
   },
   updateTicket: async (id: number, data: TicketCreate) => {
     try {
-      const response = await api.put<Ticket>(`/tickets/${id}`, data);
+      const response = await api.patch<Ticket>(`/tickets/${id}`, data);
       return mapTicketId(response.data);
     } catch (error) {
       console.error("Error updating ticket:", error);
+      throw error;
+    }
+  },
+  updateStatus: async (id: number, data: TicketCreate) => {  
+    try {
+      const response = await api.patch<Ticket>(`/tickets/${id}/status`, data);
+      return mapTicketId(response.data);
+    } catch (error) {
+      console.error("Error updating ticket status:", error);
       throw error;
     }
   },

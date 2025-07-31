@@ -90,7 +90,7 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
 
     try {
       if (selectedElement) {
-        TicketService.updateTicket(selectedElement.id, payload);
+        TicketService.updateStatus(selectedElement.id, payload);
         closeDialog();
         router.push('/dashboard/chamados');
       }
