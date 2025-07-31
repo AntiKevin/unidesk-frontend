@@ -47,10 +47,10 @@ export function NovoChamadoForm(): React.JSX.Element {
     if (user && user.role === 'ALUNO') {
       try {
         const aluno = await AlunoService.getAlunoById(user.id);
-        if (aluno.curso.coordenacoes.length > 0) {
+        if (aluno.curso.coordenacao) {
           setTicketFormData((prev) => ({
             ...prev,
-            idCoordenacao: aluno.curso.coordenacoes[0].idCoordenacao,
+            idCoordenacao: aluno.curso.coordenacao.idCoordenacao,
             idAluno: user.id,
           }));
         }
