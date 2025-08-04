@@ -1,6 +1,7 @@
 'use client';
+import { useUser } from '@/hooks/use-user';
 import StatusService from '@/services/statusService';
-import { FormControl, MenuItem, Select, TextField } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -37,6 +38,10 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
 
   const [status, setStatus] = React.useState<Status>(currentStatus);
   const [statusOptions, setStatusOptions] = React.useState<Status[]>([]);
+  const [selectedEmployee, setSelectedEmployee] = React.useState<number | string>('');
+  const [employeeOptions, setEmployeeOptions] = React.useState<{ id: number; name: string }[]>([]);
+
+  const { user } = useUser();
 
   async function fetchStatusOptions() {
     try {
@@ -110,7 +115,10 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
           <Typography gutterBottom>
             <strong>Descrição:</strong> {chamado?.descricao || 'N/A'}
           </Typography>
-          {mode === 'view' && (
+          {mode === 'view' && (user?.role === "ADMIN" 
+          || user?.role === "COORDENADOR" 
+          || user?.role === "FUNCIONARIO-COORDENACAO"
+          ) && (
             <>
               <strong>Status: </strong>
               <FormControl sx={{ flexGrow: 1, maxWidth: '100%', width: 240 }}>
@@ -128,9 +136,34 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
                     </MenuItem>
                   ))}
                </Select>
+              {}
              </FormControl>
 
             </>
+          )}
+          {mode === 'view' && user?.role === "ALUNO" && (
+            <Typography gutterBottom>
+              <strong>Status: </strong> {status.nome}
+            </Typography>
+          )}
+          {mode === 'view' && (user?.role === "ADMIN" || user?.role === "COORDENADOR") && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, marginTop: 2 }} >
+              <FormControl sx={{ flexGrow: 1, maxWidth: '100%', width: 240 }}>
+                <InputLabel id="add-employee-label">Funcionário</InputLabel>
+                <Select
+                  labelId="add-employee-label"
+                  value={selectedEmployee}
+                  onChange={(e) => setSelectedEmployee(e.target.value)}
+                  displayEmpty
+                >
+                  {employeeOptions.map(opt => (
+                    <MenuItem key={opt.id} value={opt.id}>
+                      {opt.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
           )}
           {mode === 'finalize' && (
             <Box sx={{ flexGrow: 1, maxWidth: '100%', width: '100%' }}>
