@@ -18,7 +18,7 @@ export function ChamadosStats({ chamados }: ChamadosStatsProps): React.JSX.Eleme
   const totalChamados = data.length;
   const chamadosAbertos = data.filter(chamados => chamados.status.nome === 'Aberto').length;
   const chamadosEmAndamento = data.filter(chamados => chamados.status.nome === 'Em Andamento').length;
-  const chamadosResolvidos = data.filter(chamados => chamados.status.nome === 'Resolvido').length;
+  const chamadosResolvidos = data.filter(chamados => chamados.status.nome === 'Fechado').length;
 
   return (
     <Grid container spacing={3}>
