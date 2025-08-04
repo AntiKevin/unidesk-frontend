@@ -27,8 +27,9 @@ import { exemplosChamados } from './chamados-mock';
 const statusMap = {
   1: { label: 'Aberto', color: 'warning' },
   2: { label: 'Em Andamento', color: 'info' },
-  3: { label: 'Resolvido', color: 'success' },
-  4: { label: 'Fechado', color: 'default' },
+  3: { label: 'Fechado', color: 'success' },
+  4: { label: 'Pendente', color: 'error' },
+
 } as const;
 
 const statusKeyMap = {
