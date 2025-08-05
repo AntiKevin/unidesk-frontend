@@ -36,16 +36,16 @@ const TicketService = {
   getTicket: async (id: string) => {
     // Implementation for fetching a ticket by ID
   },
-  updateTicket: async (id: number, data: TicketCreate) => {
+  updateTicket: async (id: number, data: TicketUpdate) => {
     try {
-      const response = await api.patch<Ticket>(`/tickets/${id}`, data);
+      const response = await api.put<Ticket>(`/tickets/${id}`, data);
       return mapTicketId(response.data);
     } catch (error) {
       console.error("Error updating ticket:", error);
       throw error;
     }
   },
-  updateStatus: async (id: number, data: TicketCreate) => {  
+  updateStatus: async (id: number, data: TicketUpdate) => {  
     try {
       const response = await api.patch<Ticket>(`/tickets/${id}/status`, data);
       return mapTicketId(response.data);

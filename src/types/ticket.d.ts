@@ -14,6 +14,18 @@ interface Ticket {
   categoria: Categoria
 }
 
+interface TicketUpdate {
+  titulo: string
+  descricao: string
+  idCoordenacao: number
+  idFuncionario: number
+  idAluno: number
+  idStatus: number
+  idPrioridade: number
+  idCategoria: number
+}
+
+
 interface TicketCreate {
   titulo: string
   descricao: string
