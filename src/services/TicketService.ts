@@ -1,7 +1,9 @@
 import api from "@/lib/axios";
 
-// essa função é para mapear o ticket retornado pela API para o tipo Ticket
-// criada principalmente para garantir que o id seja tipado sem o '@id'
+/**
+ * Essa função é para mapear o ticket retornado pela API para o tipo Ticket
+ * criada principalmente para garantir que o id seja tipado sem o '@id'
+ */
 const mapTicketId = (ticket: any): Ticket => {
   const convertedTicket = {
     id: ticket['@id'],
@@ -10,6 +12,17 @@ const mapTicketId = (ticket: any): Ticket => {
   return convertedTicket;
 };
 
+/**
+ * Serviço para gerenciar tickets (chamados) na API
+ * Inclui operações CRUD e busca de tickets com paginação e filtros.
+ * @see TicketService.getTickets para busca paginada
+ * @see TicketService.createTicket para criação de tickets
+ * @see TicketService.updateTicket para atualização de tickets
+ * @see TicketService.updateStatus para atualização de status de tickets
+ * @see TicketService.deleteTicket para exclusão de tickets
+ * @see TicketService.getTicket para busca de ticket por ID
+ * @see TicketService.getTicketsByUser para busca de tickets por usuário
+ */
 const TicketService = {
   createTicket: async (data: TicketCreate): Promise<Ticket> => {
     try {
@@ -20,11 +33,31 @@ const TicketService = {
       throw error;
     }
   },
-  getTickets: async (page: number = 0, size: number = 10): Promise<Ticket[]> => {
+  getTickets: async (
+    page: number = 0,
+    size: number = 10,
+    search?: string,
+    statusId?: number,
+    prioridadeId?: number,
+    cursoId?: number
+  ): Promise<ResponsePaginated<Ticket>> => {
     try {
-      const response = await api.get<ResponsePaginated<Ticket>>(`/tickets/?page=${page}&size=${size}`);
-      const typedTickets = response.data.content.map(mapTicketId);
-      return typedTickets;
+
+      // constrói a URL com os parâmetros de paginação e filtros  
+      const url = `/tickets/?page=${page}&size=${size}` +
+        `&search=${search || ''}` +
+        `&statusId=${statusId || ''}` +
+        `&prioridadeId=${prioridadeId || ''}` +
+        `&cursoId=${cursoId || ''}`;
+
+      // faz a requisição para a API
+      const response = await api.get<ResponsePaginated<Ticket>>(url);
+      // converte e preserva metadados de paginação
+      const paginated = {
+        ...response.data,
+        content: response.data.content.map(mapTicketId),
+      } as ResponsePaginated<Ticket>;
+      return paginated;
     } catch (error) {
       console.error("Error fetching tickets:", error);
       throw error;
