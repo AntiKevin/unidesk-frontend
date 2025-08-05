@@ -96,7 +96,21 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
   };
 
   const handleFinalize = () => {
-    if (onSubmit)
+    if (onSubmit && chamado) {
+      const payload: TicketUpdate = {
+        idStatus: 3, // definindo como Fechado
+        // mantendo os outros campos do chamado
+        titulo: chamado.titulo,
+        descricao: chamado.descricao,
+        idCoordenacao: chamado.coordenacao?.idCoordenacao || 0,
+        idAluno: chamado.aluno?.idUsuario || 0,
+        idPrioridade: chamado.prioridade?.idPrioridade || 1,
+        idCategoria: chamado.categoria?.idCategoria || 1,
+        idFuncionario: chamado.funcionario?.idUsuario || 0,
+      };
+      console.log("Submitting payload:", payload);
+      onSubmit(payload);
+    }
     handleCloseInternal();
   }
 
