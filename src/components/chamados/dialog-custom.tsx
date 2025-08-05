@@ -1,7 +1,8 @@
 'use client';
 import { useUser } from '@/hooks/use-user';
+import FuncCoordenacaoService from '@/services/FuncCoordenacaoService';
 import StatusService from '@/services/statusService';
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -11,7 +12,6 @@ import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
-import { Pen } from '@phosphor-icons/react';
 import { X } from '@phosphor-icons/react/dist/ssr';
 import * as React from 'react';
 
@@ -30,16 +30,19 @@ type Props = {
   onClose: () => void;
   chamado: Ticket | null;
   mode: 'view' | 'finalize';
-  currentStatus: Status
-  onSubmit?: (idStatus: number) => void;
+  currentStatus: Status;
+  onSubmit?: (payload: TicketUpdate) => void;
 }
+
+const DEFAULT_SELECTED_EMPLOYEE = { id: 0, name: 'Selecione um funcionário' };
 
 export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, currentStatus}: Props ) {
 
   const [status, setStatus] = React.useState<Status>(currentStatus);
   const [statusOptions, setStatusOptions] = React.useState<Status[]>([]);
-  const [selectedEmployee, setSelectedEmployee] = React.useState<number | string>('');
+  const [selectedEmployee, setSelectedEmployee] = React.useState<{ id: number; name: string }>(DEFAULT_SELECTED_EMPLOYEE);
   const [employeeOptions, setEmployeeOptions] = React.useState<{ id: number; name: string }[]>([]);
+
 
   const { user } = useUser();
 
@@ -52,6 +55,20 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
     }
   }
 
+  async function fetchEmployeeOptions() {
+    try {
+      const response = await FuncCoordenacaoService.getFuncionarios();
+      const options = response.map((funcionario) => ({
+        id: funcionario.idUsuario,
+        name: funcionario.nome,
+      }));
+      setEmployeeOptions(options);
+    } catch (error) {
+      console.error("Error fetching employee options:", error);
+    }
+  }
+
+  // Atualiza o status quando o currentStatus muda
   React.useEffect(() => {
     setStatus(currentStatus);
   }, [currentStatus])
@@ -59,25 +76,53 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
   // Obtem as opções de status quando o componente é montado
   React.useEffect(() => {
     fetchStatusOptions();
+    fetchEmployeeOptions();
+  }, []);
+
+  // Limpa as opções quando o componente é desmontado
+  React.useEffect(() => {
+    return () => {
+      setStatusOptions([]);
+      setEmployeeOptions([]);
+    }
   }, []);
 
   
-  const handleFinalize = () => {
+  // limpa estados e dispara onClose original
+  const handleCloseInternal = () => {
+    setStatus(currentStatus);
+    setSelectedEmployee(DEFAULT_SELECTED_EMPLOYEE);
     onClose();
+  };
+
+  const handleFinalize = () => {
+    if (onSubmit)
+    handleCloseInternal();
   }
 
   const handleClick = () => {
-    if(onSubmit) {
-      onSubmit(status.idStatus)
+    if (onSubmit && chamado) {
+      const payload: TicketUpdate = {
+        idStatus: status.idStatus,
+        titulo: chamado.titulo,
+        descricao: chamado.descricao,
+        idCoordenacao: chamado.coordenacao?.idCoordenacao || 0,
+        idAluno: chamado.aluno?.idUsuario || 0,
+        idPrioridade: chamado.prioridade?.idPrioridade || 1,
+        idCategoria: chamado.categoria?.idCategoria || 1,
+        idFuncionario: selectedEmployee.id || chamado.funcionario?.idUsuario || 0,
+      };
+      console.log("Submitting payload:", payload);
+      onSubmit(payload);
     }
-    onClose()
+    handleCloseInternal();
   }
 
   return (
     <React.Fragment>
       
       <BootstrapDialog
-        onClose={onClose}
+        onClose={handleCloseInternal}
         aria-labelledby="customized-dialog-title"
         open={open}
       >
@@ -86,7 +131,7 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
         </DialogTitle>
         <IconButton
           aria-label="close"
-          onClick={onClose}
+          onClick={handleCloseInternal}
           sx={(theme) => ({
             position: 'absolute',
             right: 8,
@@ -152,9 +197,13 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
                 <InputLabel id="add-employee-label">Funcionário</InputLabel>
                 <Select
                   labelId="add-employee-label"
-                  value={selectedEmployee}
-                  onChange={(e) => setSelectedEmployee(e.target.value)}
-                  displayEmpty
+                  label="Funcionário"
+                  value={selectedEmployee.id}
+                  onChange={(e) => {
+                    const id = Number(e.target.value);
+                    const sel = employeeOptions.find(opt => opt.id === id);
+                    if (sel) setSelectedEmployee(sel);
+                  }}
                 >
                   {employeeOptions.map(opt => (
                     <MenuItem key={opt.id} value={opt.id}>
@@ -165,21 +214,6 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
               </FormControl>
             </Box>
           )}
-          {mode === 'finalize' && (
-            <Box sx={{ flexGrow: 1, maxWidth: '100%', width: '100%' }}>
-            <TextField
-              fullWidth
-              InputProps={{
-                startAdornment: (
-                  <Box sx={{ color: 'text.secondary', mr: 1 }}>
-                    <Pen fontSize="var(--icon-fontSize-md)" />
-                  </Box>
-                ),
-              }}
-              placeholder="Observações"
-            />
-          </Box>
-          )}
         </DialogContent>
         <DialogActions>
           
@@ -189,7 +223,9 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
             </Button>
           )}
           {mode === 'finalize' && (
-            <Button onClick={handleFinalize}>
+            // botão do tipo block (que preenche horizontalmente a div quem está situado)
+            <Button
+              onClick={handleFinalize}>
               Finalizar
             </Button>
           )}

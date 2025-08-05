@@ -78,25 +78,14 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
     };
   }
 
-  const handleDialogSubmit = (idStatus: number) => {
-    const payload: TicketCreate = {
-      idStatus,
-      titulo: selectedElement?.titulo || '',
-      descricao: selectedElement?.descricao || '',
-      idCoordenacao: selectedElement?.coordenacao?.idCoordenacao || 0,
-      idAluno: selectedElement?.aluno?.idUsuario || 0,
-      idPrioridade: selectedElement?.prioridade?.idPrioridade || 1,
-      idCategoria: selectedElement?.categoria?.idCategoria || 1,
-    };
-
+  const handleDialogSubmit = (payload: TicketUpdate) => {
+    if (!selectedElement) return;
     try {
-      if (selectedElement) {
-        TicketService.updateStatus(selectedElement.id, payload);
-        closeDialog();
-        router.push('/dashboard/chamados');
-      }
+      TicketService.updateTicket(selectedElement.id, payload);
+      closeDialog();
+      router.push('/dashboard/chamados');
     } catch (error) {
-      console.error("Error updating ticket status:", error);
+      console.error("Error updating ticket:", error);
     }
   };
 
