@@ -1,9 +1,7 @@
 'use client';
 import { IconButton, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardHeader from '@mui/material/CardHeader';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -12,10 +10,10 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Stack } from '@mui/system';
 import { Check, MagnifyingGlass } from '@phosphor-icons/react/dist/ssr';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import * as React from 'react';
 import DialogCustom from './dialog-custom';
 
@@ -42,11 +40,46 @@ const statusKeyMap = {
 export interface ChamadosListProps {
   chamados?: Ticket[];
   sx?: SxProps;
+  filters?: {
+    search: string;
+    statusId: number | null;
+    prioridadeId: number | null;
+    cursoId: number | null;
+  };
 }
 
-export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JSX.Element {
+export function ChamadosList({ chamados = [], sx, filters }: ChamadosListProps): React.JSX.Element {
+  // Estados de filtros (desestruturando com valores padrão)
+  const {
+    search = '',
+    statusId = null,
+    prioridadeId = null,
+    cursoId = null,
+  } = filters || {};
 
-  const dadosChamados = chamados.length > 0 ? chamados : exemplosChamados;
+  // estados de paginação e dados
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [dadosPaginated, setDadosPaginated] = React.useState<ResponsePaginated<Ticket> | null>(null);
+
+  // busca chamados paginados da API com filtros
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const result = await TicketService.getTickets(
+          page,
+          rowsPerPage,
+          search,
+          statusId ?? undefined,
+          prioridadeId ?? undefined,
+          cursoId ?? undefined
+        );
+        setDadosPaginated(result);
+      } catch (error) {
+        console.error('Erro ao buscar chamados paginados:', error);
+      }
+    })();
+  }, [page, rowsPerPage, search, statusId, prioridadeId, cursoId]);
 
   const router = useRouter();
 
@@ -107,8 +140,8 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
             </TableRow>
           </TableHead>
           <TableBody>
-            {dadosChamados.map((chamado) => {
-			  const { label, color } = statusMap[chamado.status.idStatus as keyof typeof statusMap] || { label: 'Desconhecido', color: 'default' };
+            {(dadosPaginated?.content || exemplosChamados).map((chamado) => {
+        const { label, color } = statusMap[chamado.status.idStatus as keyof typeof statusMap] || { label: 'Desconhecido', color: 'default' };
 
               return (
                 <TableRow hover key={chamado.id}>
@@ -141,16 +174,18 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
         </Table>
       </Box>
       <Divider />
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button
-          color="inherit"
-          endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />}
-          size="small"
-          variant="text"
-        >
-          Ver todos
-        </Button>
-      </CardActions>
+      <TablePagination
+        component="div"
+        count={dadosPaginated?.totalElements ?? exemplosChamados.length}
+        page={page}
+        onPageChange={(_, newPage) => setPage(newPage)}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={event => {
+          setRowsPerPage(parseInt(event.target.value, 10));
+          setPage(0);
+        }}
+        rowsPerPageOptions={[5, 10, 25]}
+      />
 
       <DialogCustom 
         open={isDialogOpen}
