@@ -12,18 +12,25 @@ import { paths } from '@/paths';
 import TicketService from '@/services/TicketService';
 
 export default function Page(): React.JSX.Element {
-    // Define o estado para armazenar os chamados
+    // Define o estado para armazenar os chamados (todos, para stats)
     const [tickets, setTickets] = React.useState<Ticket[]>([]);
+    // Estado para filtros aplicados
+    const [filters, setFilters] = React.useState<{
+      search: string;
+      statusId: number | null;
+      prioridadeId: number | null;
+      cursoId: number | null;
+    }>({ search: '', statusId: null, prioridadeId: null, cursoId: null });
 
     // Realiza a busca dos chamados na API
     const getChamados = async () => {
         try {
-            const tickets = await TicketService.getTickets();
-            setTickets(tickets);
+            const response = await TicketService.getTickets();
+            setTickets(response.content);
         } catch (error) {
             console.error('Erro ao buscar chamados:', error);
         }
-    }
+    };
 
     React.useEffect(() => {
         getChamados();
@@ -47,8 +54,8 @@ export default function Page(): React.JSX.Element {
             </Stack>
 
             <ChamadosStats chamados={tickets} />
-            <ChamadosFilters />
-            <ChamadosList chamados={tickets} />
+            <ChamadosFilters onFilter={setFilters} />
+            <ChamadosList filters={filters} />
         </Stack>
     );
 }
