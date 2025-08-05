@@ -81,7 +81,7 @@ export function ChamadosList({ chamados = [], sx }: ChamadosListProps): React.JS
   const handleDialogSubmit = (payload: TicketUpdate) => {
     if (!selectedElement) return;
     try {
-      TicketService.updateTicket(selectedElement.id, payload);
+      TicketService.updateTicket(selectedElement.idTicket, payload);
       closeDialog();
       router.push('/dashboard/chamados');
     } catch (error) {
