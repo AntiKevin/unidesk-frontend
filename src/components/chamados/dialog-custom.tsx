@@ -68,6 +68,18 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
     }
   }
 
+  // Define o status inicial como o status atual do chamado
+  React.useEffect(() => {
+    if (chamado) {
+      const initialStatus = chamado.status || currentStatus;
+      setStatus(initialStatus);
+      setSelectedEmployee({
+        id: chamado.funcionario?.idUsuario || 0,
+        name: chamado.funcionario?.nome || 'Selecione um funcionário',
+      });
+    }
+  }, [chamado, currentStatus]);
+
   // Atualiza o status quando o currentStatus muda
   React.useEffect(() => {
     setStatus(currentStatus);
