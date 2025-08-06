@@ -16,7 +16,6 @@ import { useRouter } from 'next/navigation';
 import * as React from 'react';
 
 // Mapeamento de status conforme ChamadosList
-// Mapeamento de status conforme ChamadosList
 const statusMap = {
   1: { label: 'Aberto', color: 'warning' },
   2: { label: 'Em Andamento', color: 'info' },
