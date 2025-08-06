@@ -12,7 +12,6 @@ import * as React from 'react';
 import { Logo } from '@/components/core/logo';
 import { isNavItemActive } from '@/lib/is-nav-item-active';
 import { paths } from '@/paths';
-import type { NavItemConfig } from '@/types/nav';
 
 import { Button } from '@mui/material';
 import { navItems } from './config';
