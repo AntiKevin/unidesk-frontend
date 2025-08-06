@@ -88,7 +88,9 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
   // Obtem as opções de status quando o componente é montado
   React.useEffect(() => {
     fetchStatusOptions();
-    fetchEmployeeOptions();
+    if (user?.role === "COORDENADOR" || user?.role === "ADMIN") {
+      fetchEmployeeOptions();
+    }
   }, []);
 
   // Limpa as opções quando o componente é desmontado
@@ -242,8 +244,8 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
           )}
         </DialogContent>
         <DialogActions>
-          
-          {mode === 'view' && (
+
+          {mode === 'view' && user?.role !== "ALUNO" && (
             <Button onClick={handleClick}>
               Alterar
             </Button>
