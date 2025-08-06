@@ -122,7 +122,6 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
         idCategoria: chamado.categoria?.idCategoria || 1,
         idFuncionario: chamado.funcionario?.idUsuario || 0,
       };
-      console.log("Submitting payload:", payload);
       onSubmit(payload);
     }
     handleCloseInternal();
@@ -140,7 +139,6 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
         idCategoria: chamado.categoria?.idCategoria || 1,
         idFuncionario: selectedEmployee.id || chamado.funcionario?.idUsuario || 0,
       };
-      console.log("Submitting payload:", payload);
       onSubmit(payload);
     }
     handleCloseInternal();
