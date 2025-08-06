@@ -17,6 +17,7 @@ import { Check, MagnifyingGlass } from '@phosphor-icons/react/dist/ssr';
 import * as React from 'react';
 import DialogCustom from './dialog-custom';
 
+import { useUser } from '@/hooks/use-user';
 import TicketService from '@/services/TicketService';
 import { useRouter } from 'next/navigation';
 import { exemplosChamados } from './chamados-mock';
@@ -28,13 +29,6 @@ const statusMap = {
   3: { label: 'Fechado', color: 'success' },
   4: { label: 'Pendente', color: 'error' },
 
-} as const;
-
-const statusKeyMap = {
-  aberto: 1,
-  emAndamento: 2,
-  resolvido: 3,
-  fechado: 4,
 } as const;
 
 export interface ChamadosListProps {
@@ -49,6 +43,17 @@ export interface ChamadosListProps {
 }
 
 export function ChamadosList({ chamados = [], sx, filters }: ChamadosListProps): React.JSX.Element {
+
+  const { user } = useUser();
+  const router = useRouter();
+
+  const [selectedElement, setSelectedElement] = React.useState<Ticket | null>(null);
+  const [isDialogOpen, setDialogOpen] = React.useState(false);
+  const [mode, setMode] = React.useState<'view' | 'finalize'>('view');
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [dadosPaginated, setDadosPaginated] = React.useState<ResponsePaginated<Ticket> | null>(null);
+
   // Estados de filtros (desestruturando com valores padrão)
   const {
     search = '',
@@ -57,35 +62,22 @@ export function ChamadosList({ chamados = [], sx, filters }: ChamadosListProps):
     cursoId = null,
   } = filters || {};
 
-  // estados de paginação e dados
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [dadosPaginated, setDadosPaginated] = React.useState<ResponsePaginated<Ticket> | null>(null);
-
-  // busca chamados paginados da API com filtros
-  React.useEffect(() => {
-    (async () => {
-      try {
-        const result = await TicketService.getTickets(
-          page,
-          rowsPerPage,
-          search,
-          statusId ?? undefined,
-          prioridadeId ?? undefined,
-          cursoId ?? undefined
-        );
-        setDadosPaginated(result);
-      } catch (error) {
-        console.error('Erro ao buscar chamados paginados:', error);
-      }
-    })();
-  }, [page, rowsPerPage, search, statusId, prioridadeId, cursoId]);
-
-  const router = useRouter();
-
-  const [selectedElement, setSelectedElement] = React.useState<Ticket | null>(null);
-  const [isDialogOpen, setDialogOpen] = React.useState(false);
-  const [mode, setMode] = React.useState<'view' | 'finalize'>('view');
+  // Função para buscar chamados paginados da API
+  const fetchChamados = async () => {
+    try {
+      const result = await TicketService.getTickets(
+        page,
+        rowsPerPage,
+        search,
+        statusId ?? undefined,
+        prioridadeId ?? undefined,
+        cursoId ?? undefined
+      );
+      setDadosPaginated(result);
+    } catch (error) {
+      console.error('Erro ao buscar chamados paginados:', error);
+    }
+  };
 
   const openDialog = (ticket: Ticket, mode: 'view' | 'finalize') => {
     setSelectedElement(ticket);
@@ -111,16 +103,22 @@ export function ChamadosList({ chamados = [], sx, filters }: ChamadosListProps):
     };
   }
 
-  const handleDialogSubmit = (payload: TicketUpdate) => {
+  const handleDialogSubmit = async (payload: TicketUpdate) => {
     if (!selectedElement) return;
     try {
-      TicketService.updateTicket(selectedElement.idTicket, payload);
+      await TicketService.updateTicket(selectedElement.idTicket, payload);
       closeDialog();
-      router.push('/dashboard/chamados');
+      // Recarrega lista após atualização
+      fetchChamados();
     } catch (error) {
-      console.error("Error updating ticket:", error);
+      console.error('Error updating ticket:', error);
     }
   };
+
+  // busca chamados paginados da API com filtros quando parâmetros mudam
+  React.useEffect(() => {
+    fetchChamados();
+  }, [page, rowsPerPage, search, statusId, prioridadeId, cursoId]);
 
   return (
     <Card sx={sx}>
@@ -160,11 +158,13 @@ export function ChamadosList({ chamados = [], sx, filters }: ChamadosListProps):
                             <MagnifyingGlass />
                           </IconButton>
                       </Tooltip>
-                      <Tooltip title="Fechar">
-                          <IconButton onClick= {() => openDialog(chamado, 'finalize')}>
+                      {user?.role !== "ALUNO" && (
+                        <Tooltip title="Fechar">
+                          <IconButton onClick={() => openDialog(chamado, 'finalize')}>
                             <Check />
                           </IconButton>
-                      </Tooltip>
+                        </Tooltip>
+                      )}
                     </Stack>
                   </TableCell>
                 </TableRow>
