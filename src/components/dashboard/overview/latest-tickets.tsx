@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -13,32 +12,26 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
-import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
 
+// Mapeamento de status conforme ChamadosList
+// Mapeamento de status conforme ChamadosList
 const statusMap = {
-  aberto: { label: 'Aberto', color: 'primary' },
-  resolvido: { label: 'Resolvido', color: 'success' },
-  emAndamento: { label: 'Em Andamento', color: 'warning' },
+  1: { label: 'Aberto', color: 'warning' },
+  2: { label: 'Em Andamento', color: 'info' },
+  3: { label: 'Fechado', color: 'success' },
+  4: { label: 'Pendente', color: 'error' },
 } as const;
 
-export interface Ticket {
-  id: string;
-  titulo: string;
-  solicitante: {nome: string, email: string};
-  departamento: string;
-  prioridade: string
-  status: 'aberto' | 'emAndamento' | 'resolvido';
-  criadoEm: Date;
-}
-
-export interface LatestOrdersProps {
+export interface LatestTicketsProps {
   tickets?: Ticket[];
   sx?: SxProps;
 }
 
-export function LatestTickets({ tickets = [], sx }: LatestOrdersProps): React.JSX.Element {
+export function LatestTickets({ tickets = [], sx }: LatestTicketsProps): React.JSX.Element {
 
-  
+  const router = useRouter();
 
   return (
     <Card sx={sx}>
@@ -56,13 +49,14 @@ export function LatestTickets({ tickets = [], sx }: LatestOrdersProps): React.JS
           </TableHead>
           <TableBody>
             {tickets.map((ticket) => {
-              const { label, color } = statusMap[ticket.status] ?? { label: 'Unknown', color: 'default' };
+              const statusKey = ticket.status.idStatus as keyof typeof statusMap;
+              const { label, color } = statusMap[statusKey] ?? { label: 'Desconhecido', color: 'default' };
 
               return (
                 <TableRow hover key={ticket.id}>
-                  <TableCell>{ticket.id}</TableCell>
+                  <TableCell>{ticket.idTicket}</TableCell>
                   <TableCell>{ticket.titulo}</TableCell>
-                  <TableCell>{dayjs(ticket.criadoEm).format('D, MMM YYYY')}</TableCell>
+                  <TableCell>{new Date(ticket.dataCriacao * 1000).toLocaleString()}</TableCell>
                   <TableCell>
                     <Chip color={color} label={label} size="small" />
                   </TableCell>
@@ -78,9 +72,10 @@ export function LatestTickets({ tickets = [], sx }: LatestOrdersProps): React.JS
           color="inherit"
           endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />}
           size="small"
+          onClick={() => {router.push('/dashboard/chamados')}}
           variant="text"
         >
-          View all
+          Ver Todos
         </Button>
       </CardActions>
     </Card>
