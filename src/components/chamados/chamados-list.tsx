@@ -19,7 +19,6 @@ import DialogCustom from './dialog-custom';
 
 import { useUser } from '@/hooks/use-user';
 import TicketService from '@/services/TicketService';
-import { useRouter } from 'next/navigation';
 import { exemplosChamados } from './chamados-mock';
 
 
@@ -45,7 +44,6 @@ export interface ChamadosListProps {
 export function ChamadosList({ chamados = [], sx, filters }: ChamadosListProps): React.JSX.Element {
 
   const { user } = useUser();
-  const router = useRouter();
 
   const [selectedElement, setSelectedElement] = React.useState<Ticket | null>(null);
   const [isDialogOpen, setDialogOpen] = React.useState(false);
