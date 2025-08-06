@@ -36,3 +36,20 @@ interface TicketCreate {
   idCategoria: number
 }
 
+interface TicketDashboard {
+  totalTickets: number
+  totalTicketsResolvidos: number
+  totalTicketsAbertos: number
+  totalTicketsPendentes: number
+  totalTicketsEmAndamento: number
+  porcentagemProgresso: number
+  porcentagemAbertos: number
+  porcentagemResolvidos: number
+  porcentagemAndamento: number
+}
+
+interface TicketStatsMes {
+  mes: number
+  total: number
+}
+

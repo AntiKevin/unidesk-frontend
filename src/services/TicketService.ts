@@ -90,6 +90,24 @@ const TicketService = {
   deleteTicket: async (id: string) => {
     // Implementation for deleting a ticket
   },
+  getDashboard: async (): Promise<TicketDashboard> => {
+    try {
+      const response = await api.get<TicketDashboard>("/tickets/dashboard");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching ticket dashboard:", error);
+      throw error;
+    }
+  },
+  getTicketsStatsMes: async (): Promise<TicketStatsMes[]> => {
+    try {
+      const response = await api.get<TicketStatsMes[]>("/tickets/tickets-por-mes");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching ticket stats by month:", error);
+      throw error;
+    }
+  }
 };
 
 export default TicketService;
