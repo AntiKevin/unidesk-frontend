@@ -11,6 +11,15 @@ const FuncCoordenacaoService = {
         throw error;
     }
   },
+  getFuncionarioById: async (id: number): Promise<Funcionario> => {
+    try {
+      const response = await api.get<Funcionario>(`/funcionarios-coordenacao/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching funcionario coordenacao with id ${id}:`, error);
+      throw error;
+    }
+  },
 };
 
 export default FuncCoordenacaoService;
