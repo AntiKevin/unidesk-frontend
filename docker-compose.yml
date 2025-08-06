@@ -1,5 +1,6 @@
 services:
   web:
+    image: antikevin/unidesk-frontend
     build:
       context: .
       dockerfile: Dockerfile
