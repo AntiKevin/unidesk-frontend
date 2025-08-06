@@ -21,7 +21,6 @@ export function GuestGuard({ children }: GuestGuardProps): React.JSX.Element | n
     if (isLoading) {
       return;
     }
-    console.log(user)
 
     if (error) {
       setIsChecking(false);
