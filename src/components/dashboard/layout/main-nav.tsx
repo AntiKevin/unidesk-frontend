@@ -18,10 +18,6 @@ export function MainNav(): React.JSX.Element {
   const [openNav, setOpenNav] = React.useState<boolean>(false);
   const { user } = useUser();
 
-  React.useEffect(() => {
-    console.log('User in MainNav:', user);
-  }, [user]);
-
   const userPopover = usePopover<HTMLDivElement>();
 
   return (
