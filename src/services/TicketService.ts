@@ -107,6 +107,15 @@ const TicketService = {
       console.error("Error fetching ticket stats by month:", error);
       throw error;
     }
+  },
+  getTicketMovimentacoes: async (ticketId: string): Promise<TicketMovimentacao[]> => {
+    try {
+      const response = await api.get<TicketMovimentacao[]>(`/tickets/movimentacoes/${ticketId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching ticket movimentacoes:", error);
+      throw error;
+    }
   }
 };
 
