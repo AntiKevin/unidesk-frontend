@@ -2,6 +2,15 @@
 import { useUser } from '@/hooks/use-user';
 import FuncCoordenacaoService from '@/services/FuncCoordenacaoService';
 import StatusService from '@/services/statusService';
+import TicketService from '@/services/TicketService';
+import HistoryIcon from '@mui/icons-material/History';
+import Timeline from '@mui/lab/Timeline';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import TimelineDot from '@mui/lab/TimelineDot';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -42,6 +51,7 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
   const [statusOptions, setStatusOptions] = React.useState<Status[]>([]);
   const [selectedEmployee, setSelectedEmployee] = React.useState<{ id: number; name: string }>(DEFAULT_SELECTED_EMPLOYEE);
   const [employeeOptions, setEmployeeOptions] = React.useState<{ id: number; name: string }[]>([]);
+  const [movimentacoes, setMovimentacoes] = React.useState<TicketMovimentacao[]>([]);
 
 
   const { user } = useUser();
@@ -91,7 +101,12 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
     if (user?.role === "COORDENADOR" || user?.role === "ADMIN") {
       fetchEmployeeOptions();
     }
-  }, []);
+    if (open && mode === 'view' && chamado) {
+      TicketService.getTicketMovimentacoes(chamado.idTicket.toString())
+        .then(data => setMovimentacoes(data))
+        .catch(err => console.error('Error fetching movimentações:', err));
+    }
+  }, [open, mode, chamado]);
 
   // Limpa as opções quando o componente é desmontado
   React.useEffect(() => {
@@ -240,9 +255,38 @@ export default function DialogCustom( { open, onClose, chamado, mode, onSubmit, 
               </FormControl>
             </Box>
           )}
+          {/* Timeline de Movimentações */}
+          {mode === 'view' && (
+            <>
+              <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>Histórico de Movimentações</Typography>
+              {movimentacoes.length > 0 ? (
+                <Timeline position="right">
+                  {movimentacoes.map((mov) => (
+                    <TimelineItem key={mov.idMovimentacao}>
+                      <TimelineOppositeContent variant="body2" color="text.secondary">
+                        {new Date(mov.dataMovimentacao).toLocaleString()}
+                      </TimelineOppositeContent>
+                      <TimelineSeparator>
+                        <TimelineDot color="primary"><HistoryIcon /></TimelineDot>
+                        <TimelineConnector />
+                      </TimelineSeparator>
+                      <TimelineContent>
+                        <Typography>{mov.tipo}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {mov.usuarioDestino ? `${String(mov.usuarioOrigem.nome)} → ${String(mov.usuarioDestino.nome)}` :
+                            `${String(mov.usuarioOrigem.nome)}`}
+                        </Typography>
+                      </TimelineContent>
+                    </TimelineItem>
+                  ))}
+                </Timeline>
+              ) : (
+                <Typography variant="body2" color="text.secondary">Nenhuma movimentação encontrada.</Typography>
+              )}
+            </>
+          )}
         </DialogContent>
         <DialogActions>
-
           {mode === 'view' && user?.role !== "ALUNO" && (
             <Button onClick={handleClick}>
               Alterar
