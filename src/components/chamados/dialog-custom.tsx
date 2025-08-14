@@ -148,7 +148,6 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
       if (chamado?.idTicket !== undefined) {
         const result = await TicketService.getTicketMessages(chamado?.idTicket);
         setMessages(result);
-        console.log(result)
       }
     } catch (error) {
       console.error('Erro ao buscar chamados paginados:', error);
