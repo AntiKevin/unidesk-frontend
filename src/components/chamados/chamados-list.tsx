@@ -156,7 +156,10 @@ export function ChamadosList({ chamados = [], sx, filters }: ChamadosListProps):
                             <MagnifyingGlass />
                           </IconButton>
                       </Tooltip>
-                      {user?.role !== "ALUNO" && (
+                      {user?.role !== "ALUNO" 
+                      && chamado.status.idStatus !== 3 
+                      && !( user?.role === "FUNCIONARIO_COORDENACAO" && chamado.status.idStatus === 4 ) 
+                      && (
                         <Tooltip title="Fechar">
                           <IconButton onClick={() => openDialog(chamado, 'finalize')}>
                             <Check />
