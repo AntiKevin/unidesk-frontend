@@ -12,6 +12,7 @@ interface Ticket {
   status: Status
   prioridade: Prioridade
   categoria: Categoria
+  mensagem: Mensagem
 }
 
 interface TicketUpdate {
@@ -22,7 +23,8 @@ interface TicketUpdate {
   idAluno: number
   idStatus: number
   idPrioridade: number
-  idCategoria: number
+  idCategoria: number,
+  mensagem: string
 }
 
 interface TicketPatchUpdate {
@@ -61,6 +63,20 @@ interface TicketDashboard {
 interface TicketStatsMes {
   mes: number
   total: number
+}
+
+interface TicketMessages {
+  idMensagem: number
+  conteudo: string
+  ticket: Ticket
+  usuario: UserMessage
+}
+
+interface UserMessage {
+  idUsuario: number
+  nome: string
+  email: string
+  role: string
 }
 
 interface TicketMovimentacao {

@@ -108,6 +108,17 @@ const TicketService = {
       throw error;
     }
   },
+
+  getTicketMessages: async (id: number): Promise<TicketMessages[]> => {
+    try {
+      const response = await api.get<TicketMessages[]>(`/tickets/mensagens/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching ticket messages: ", error);
+      throw error;
+    }
+  },
+
   getTicketMovimentacoes: async (ticketId: string): Promise<TicketMovimentacao[]> => {
     try {
       const response = await api.get<TicketMovimentacao[]>(`/tickets/movimentacoes/${ticketId}`);

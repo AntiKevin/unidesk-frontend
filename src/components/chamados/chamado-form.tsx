@@ -81,7 +81,7 @@ export function NovoChamadoForm(): React.JSX.Element {
         console.error("Error fetching user coordenacao:", error);
       }
     }
-    else if (user && (user.role === 'FUNCIONARIO-COORDENACAO')) {
+    else if (user && (user.role === 'FUNCIONARIO_COORDENACAO')) {
       try {
         const funcCoord = await FuncCoordenacaoService.getFuncionarioById(user.id);
         setTicketFormData((prev) => ({
