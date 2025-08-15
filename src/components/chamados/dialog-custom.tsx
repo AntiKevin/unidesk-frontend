@@ -142,7 +142,8 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
   const handleFinalize = () => {
     if (onSubmit && chamado) {
       const payload: TicketUpdate = {
-        idStatus: 3, // definindo como Fechado
+        // definindo como Pendente caso FUNCIONARIO_COORDENACAO se não define como fechado
+        idStatus: user?.role === "FUNCIONARIO_COORDENACAO" ? 4 : 3,
         // mantendo os outros campos do chamado
         titulo: chamado.titulo,
         descricao: chamado.descricao,
@@ -235,7 +236,6 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
               </Typography>
               {mode === 'view' && (user?.role === "ADMIN"
                 || user?.role === "COORDENADOR"
-                || user?.role === "FUNCIONARIO_COORDENACAO"
               ) && (
                   <>
                     <strong>Status: </strong>
