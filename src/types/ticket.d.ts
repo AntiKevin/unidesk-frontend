@@ -84,7 +84,7 @@ interface TicketMovimentacao {
   usuarioOrigem: User
   usuarioDestino: User | null
   tipo: TipoMovimentacao
-  dataMovimentacao: string
+  dataMovimentacao: number
 }
 
 interface UsuarioMovimentacao {
