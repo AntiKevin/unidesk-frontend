@@ -186,6 +186,24 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
     refreshTickets();
   };
 
+  const handleDeny = () => {
+    if (onSubmit && chamado) {
+      const payload: TicketUpdate = {
+        idStatus: 1, // Aberto
+        titulo: chamado.titulo,
+        descricao: chamado.descricao,
+        mensagem: mensagem,
+        idCoordenacao: chamado.coordenacao?.idCoordenacao || 0,
+        idAluno: chamado.aluno?.idUsuario || 0,
+        idPrioridade: chamado.prioridade?.idPrioridade || 1,
+        idCategoria: chamado.categoria?.idCategoria || 1,
+        idFuncionario: chamado.funcionario?.idUsuario || 0,
+      };
+      onSubmit(payload);
+    }
+    handleCloseInternal();
+  };
+
   const reopenConditions = user?.role === 'ALUNO' 
   && chamado?.status?.idStatus === 3
   && new Date(chamado?.dataFechamento * 1000) > new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
@@ -456,10 +474,12 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
                 Voltar
               </Button>
               {mode === 'finalize' && (
-                <Button
-                  onClick={handleFinalize}>
-                  Finalizar
-                </Button>
+                <>
+                  <Button onClick={handleFinalize}>Finalizar</Button>
+                  {user?.role === 'COORDENADOR' && (
+                    <Button color="error" onClick={handleDeny}>Negar</Button>
+                  )}
+                </>
               )}
               {mode === 'view' && reopenConditions && (
                 <Button onClick={handleReopen}>
