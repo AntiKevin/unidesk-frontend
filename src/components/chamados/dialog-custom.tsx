@@ -3,6 +3,7 @@ import { useUser } from '@/hooks/use-user';
 import FuncCoordenacaoService from '@/services/FuncCoordenacaoService';
 import StatusService from '@/services/statusService';
 import TicketService from '@/services/TicketService';
+import { useRouter } from 'next/navigation';
 
 import HistoryIcon from '@mui/icons-material/History';
 import Timeline from '@mui/lab/Timeline';
@@ -41,11 +42,12 @@ type Props = {
   mode: 'view' | 'finalize';
   currentStatus: Status;
   onSubmit?: (payload: TicketUpdate) => void;
+  refreshTickets: () => void;
 }
 
 const DEFAULT_SELECTED_EMPLOYEE = { id: 0, name: 'Selecione um funcionário' };
 
-export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, currentStatus }: Props) {
+export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, currentStatus, refreshTickets }: Props) {
 
   const [status, setStatus] = React.useState<Status>(currentStatus);
   const [statusOptions, setStatusOptions] = React.useState<Status[]>([]);
@@ -57,6 +59,7 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
   const [movimentacoes, setMovimentacoes] = React.useState<TicketMovimentacao[]>([]);
 
   const { user } = useUser();
+  const router = useRouter();
 
   async function fetchStatusOptions() {
     try {
@@ -169,6 +172,23 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
       console.error('Erro ao buscar chamados paginados:', error);
     }
   }
+
+  const handleReopen = async () => {
+    try {
+      if (chamado?.idTicket !== undefined) {
+        await TicketService.reopenTicket(chamado.idTicket);
+        router.refresh();
+        handleCloseInternal();
+      }
+    } catch (error) {
+      console.error('Erro ao reabrir o chamado:', error);
+    }
+    refreshTickets();
+  };
+
+  const reopenConditions = user?.role === 'ALUNO' 
+  && chamado?.status?.idStatus === 3
+  && new Date(chamado?.dataFechamento * 1000) > new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
 
   const handleClick = () => {
     if (onSubmit && chamado) {
@@ -294,7 +314,7 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
                       {movimentacoes.map((mov) => (
                         <TimelineItem key={mov.idMovimentacao}>
                           <TimelineOppositeContent variant="body2" color="text.secondary">
-                            {new Date(mov.dataMovimentacao).toLocaleString()}
+                            {new Date(mov.dataMovimentacao * 1000).toLocaleString()}
                           </TimelineOppositeContent>
                           <TimelineSeparator>
                             <TimelineDot color="primary"><HistoryIcon /></TimelineDot>
@@ -332,6 +352,13 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
               && (
                 <Button onClick={handleClick}>
                   Alterar
+                </Button>
+              )}
+              {mode === 'view' 
+              && reopenConditions
+              && (
+                <Button onClick={() => setStep(2)}>
+                  Reabrir
                 </Button>
               )}
               {mode === 'finalize' && (
@@ -404,10 +431,22 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
                   label="Resolução"
                   fullWidth
                   multiline
+                  placeholder="Fale O que foi feito no chamado"
                   rows={6}
-                  defaultValue="Fale o que foi feito no chamado"
                   variant="outlined"
                   onChange={(e) => setMensagem(e.target.value)}
+                />
+              )}
+              {mode === 'view' && reopenConditions && (
+                <TextField
+                  id="reopen-reason"
+                  label="Motivo da reabertura"
+                  fullWidth
+                  multiline
+                  rows={4}
+                  variant="outlined"
+                  onChange={(e) => setMensagem(e.target.value)}
+                  sx={{ mb: 2 }}
                 />
               )}
             </DialogContent>
@@ -420,6 +459,11 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
                 <Button
                   onClick={handleFinalize}>
                   Finalizar
+                </Button>
+              )}
+              {mode === 'view' && reopenConditions && (
+                <Button onClick={handleReopen}>
+                  Enviar Reabertura
                 </Button>
               )}
             </DialogActions>
