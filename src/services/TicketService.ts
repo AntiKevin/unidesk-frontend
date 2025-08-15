@@ -127,7 +127,17 @@ const TicketService = {
       console.error("Error fetching ticket movimentacoes:", error);
       throw error;
     }
-  }
+  },
+
+  reopenTicket: async (id: number) => {
+    try {
+      const response = await api.patch<Ticket>(`/tickets/${id}/reabrir`);
+      return mapTicketId(response.data);
+    } catch (error) { 
+      console.error("Error reopening ticket:", error);
+      throw error;
+    }
+  },
 };
 
 export default TicketService;
