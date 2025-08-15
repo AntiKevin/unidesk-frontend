@@ -195,6 +195,7 @@ export function ChamadosList({ chamados = [], sx, filters }: ChamadosListProps):
         mode={mode}
         onSubmit={handleDialogSubmit}
         currentStatus={handleCurrentStatus()}
+        refreshTickets={fetchChamados}
       />
     </Card>
   );
