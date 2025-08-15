@@ -3,6 +3,15 @@ import { useUser } from '@/hooks/use-user';
 import FuncCoordenacaoService from '@/services/FuncCoordenacaoService';
 import StatusService from '@/services/statusService';
 import TicketService from '@/services/TicketService';
+
+import HistoryIcon from '@mui/icons-material/History';
+import Timeline from '@mui/lab/Timeline';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import TimelineDot from '@mui/lab/TimelineDot';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import { Divider, FormControl, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -45,6 +54,8 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
   const [step, setStep] = React.useState(1);
   const [mensagem, setMensagem] = React.useState("");
   const [mensages, setMessages] = React.useState<TicketMessages[]>([]);
+  const [movimentacoes, setMovimentacoes] = React.useState<TicketMovimentacao[]>([]);
+
   const { user } = useUser();
 
   async function fetchStatusOptions() {
@@ -92,7 +103,12 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
     if (user?.role === "COORDENADOR" || user?.role === "ADMIN") {
       fetchEmployeeOptions();
     }
-  }, []);
+    if (open && mode === 'view' && chamado) {
+      TicketService.getTicketMovimentacoes(chamado.idTicket.toString())
+        .then(data => setMovimentacoes(data))
+        .catch(err => console.error('Error fetching movimentações:', err));
+    }
+  }, [open, mode, chamado]);
 
   // Limpa as opções quando o componente é desmontado
   React.useEffect(() => {
@@ -171,11 +187,8 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
     handleCloseInternal();
   }
 
-
-
   return (
     <React.Fragment>
-
       <BootstrapDialog
         onClose={handleCloseInternal}
         aria-labelledby="customized-dialog-title"
@@ -207,15 +220,12 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
             <DialogContent dividers>
               <Typography gutterBottom>
                 <strong>ID:</strong> {chamado?.id}
-
               </Typography>
               <Typography gutterBottom>
                 <strong>Título:</strong> {chamado?.titulo}
-
               </Typography>
               <Typography gutterBottom>
                 <strong>E-mail:</strong> {chamado?.aluno?.email || chamado?.funcionario?.email || 'N/A'}
-
               </Typography>
               <Typography gutterBottom>
                 <strong>Data:</strong> {chamado?.dataCriacao ? new Date(chamado?.dataCriacao * 1000).toLocaleString() : 'N/A'}
@@ -225,6 +235,7 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
               </Typography>
               {mode === 'view' && (user?.role === "ADMIN"
                 || user?.role === "COORDENADOR"
+                || user?.role === "FUNCIONARIO_COORDENACAO"
               ) && (
                   <>
                     <strong>Status: </strong>
@@ -243,9 +254,7 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
                           </MenuItem>
                         ))}
                       </Select>
-                      { }
                     </FormControl>
-
                   </>
                 )}
               {mode === 'view' && (user?.role === "ALUNO" || user?.role === "FUNCIONARIO_COORDENACAO") && (
@@ -276,6 +285,36 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
                   </FormControl>
                 </Box>
               )}
+              {/* Timeline de Movimentações */}
+              {mode === 'view' && (
+                <>
+                  <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>Histórico de Movimentações</Typography>
+                  {movimentacoes.length > 0 ? (
+                    <Timeline position="right">
+                      {movimentacoes.map((mov) => (
+                        <TimelineItem key={mov.idMovimentacao}>
+                          <TimelineOppositeContent variant="body2" color="text.secondary">
+                            {new Date(mov.dataMovimentacao).toLocaleString()}
+                          </TimelineOppositeContent>
+                          <TimelineSeparator>
+                            <TimelineDot color="primary"><HistoryIcon /></TimelineDot>
+                            <TimelineConnector />
+                          </TimelineSeparator>
+                          <TimelineContent>
+                            <Typography>{mov.tipo}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {mov.usuarioDestino ? `${String(mov.usuarioOrigem.nome)} → ${String(mov.usuarioDestino.nome)}` :
+                                `${String(mov.usuarioOrigem.nome)}`}
+                            </Typography>
+                          </TimelineContent>
+                        </TimelineItem>
+                      ))}
+                    </Timeline>
+                  ) : (
+                    <Typography variant="body2" color="text.secondary">Nenhuma movimentação encontrada.</Typography>
+                  )}
+                </>
+              )}
             </DialogContent>
             <DialogActions>
               {mode === 'view' && (
@@ -286,7 +325,7 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
                   Mensagens
                 </Button>
               )}
-              {/* Usuarios Alunos e nme coordenadores podem modificar um chamado fora do permitido */}
+              {/* Usuarios Alunos e funcionários de coordenação não podem modificar um chamado */}
               {mode === 'view' 
               && user?.role !== "ALUNO" 
               && user?.role !== "FUNCIONARIO_COORDENACAO" 
@@ -296,7 +335,6 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
                 </Button>
               )}
               {mode === 'finalize' && (
-                // botão do tipo block (que preenche horizontalmente a div quem está situado)
                 <Button
                   onClick={() => setStep(2)}>
                   Avançar
@@ -360,9 +398,7 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
                 </List>
               )}
 
-
               {mode === 'finalize' && user?.role !== "ALUNO" && (
-
                 <TextField
                   id="standard-multiline-static"
                   label="Resolução"
@@ -374,27 +410,21 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
                   onChange={(e) => setMensagem(e.target.value)}
                 />
               )}
-
             </DialogContent>
             <DialogActions>
-
               <Button
                 onClick={() => setStep(1)}>
                 Voltar
               </Button>
               {mode === 'finalize' && (
-                // botão do tipo block (que preenche horizontalmente a div quem está situado)
-                <>
-                  <Button
-                    onClick={handleFinalize}>
-                    Finalizar
-                  </Button>
-                </>
+                <Button
+                  onClick={handleFinalize}>
+                  Finalizar
+                </Button>
               )}
             </DialogActions>
           </>
         )}
-
       </BootstrapDialog>
     </React.Fragment>
   );

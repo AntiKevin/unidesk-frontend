@@ -27,6 +27,16 @@ interface TicketUpdate {
   mensagem: string
 }
 
+interface TicketPatchUpdate {
+  titulo?: string
+  descricao?: string
+  idCoordenacao?: number
+  idFuncionario?: number
+  idAluno?: number
+  idStatus?: number
+  idPrioridade?: number
+  idCategoria?: number
+}
 
 interface TicketCreate {
   titulo: string
@@ -68,3 +78,20 @@ interface UserMessage {
   email: string
   role: string
 }
+
+interface TicketMovimentacao {
+  idMovimentacao: number
+  usuarioOrigem: User
+  usuarioDestino: User | null
+  tipo: TipoMovimentacao
+  dataMovimentacao: string
+}
+
+interface UsuarioMovimentacao {
+  idUsuario: number
+  nome: string
+  email?: string
+  role: Role
+}
+
+type TipoMovimentacao = "CAPTURAR" | "DELEGAR" | "FINALIZAR" | "ATUALIZAR_STATUS" | "ATUALIZAR";
