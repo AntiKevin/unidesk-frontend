@@ -3,7 +3,7 @@ import { useUser } from '@/hooks/use-user';
 import FuncCoordenacaoService from '@/services/FuncCoordenacaoService';
 import StatusService from '@/services/statusService';
 import TicketService from '@/services/TicketService';
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Divider, FormControl, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -15,7 +15,6 @@ import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
 import { X } from '@phosphor-icons/react/dist/ssr';
 import * as React from 'react';
-import { List, ListItem, ListItemText, Divider } from '@mui/material';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -226,7 +225,6 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
               </Typography>
               {mode === 'view' && (user?.role === "ADMIN"
                 || user?.role === "COORDENADOR"
-                || user?.role === "FUNCIONARIO-COORDENACAO"
               ) && (
                   <>
                     <strong>Status: </strong>
@@ -250,7 +248,7 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
 
                   </>
                 )}
-              {mode === 'view' && user?.role === "ALUNO" && (
+              {mode === 'view' && (user?.role === "ALUNO" || user?.role === "FUNCIONARIO_COORDENACAO") && (
                 <Typography gutterBottom>
                   <strong>Status: </strong> {status.nome}
                 </Typography>
@@ -288,7 +286,11 @@ export default function DialogCustom({ open, onClose, chamado, mode, onSubmit, c
                   Mensagens
                 </Button>
               )}
-              {mode === 'view' && user?.role !== "ALUNO" && (
+              {/* Usuarios Alunos e nme coordenadores podem modificar um chamado fora do permitido */}
+              {mode === 'view' 
+              && user?.role !== "ALUNO" 
+              && user?.role !== "FUNCIONARIO_COORDENACAO" 
+              && (
                 <Button onClick={handleClick}>
                   Alterar
                 </Button>
